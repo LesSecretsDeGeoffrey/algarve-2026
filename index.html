@@ -1,0 +1,2356 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0B0F1A">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Algarve 2026">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" sizes="180x180" href="icon.svg">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<title>Algarve · 23 au 27 juin 2026</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0B0F1A;
+    --bg-2: #121929;
+    --bg-3: #1C2540;
+    --border: rgba(200, 160, 74, 0.18);
+    --border-strong: rgba(200, 160, 74, 0.4);
+    --gold: #C8A04A;
+    --gold-bright: #E0B955;
+    --cream: #F5E6D3;
+    --terracotta: #E07856;
+    --ocean: #1B4965;
+    --text: #EDE6D6;
+    --text-dim: rgba(237, 230, 214, 0.6);
+    --text-faint: rgba(237, 230, 214, 0.35);
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+    --shadow-lg: 0 20px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(200,160,74,0.1);
+  }
+
+  html, body { height: 100%; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* HEADER */
+  .header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 68px;
+    background: linear-gradient(180deg, rgba(11,15,26,0.98) 0%, rgba(11,15,26,0.92) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 1000;
+  }
+
+  .brand { display: flex; align-items: center; gap: 14px; }
+
+  .brand-flag {
+    font-size: 26px;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
+  }
+
+  .brand-text { display: flex; flex-direction: column; gap: 2px; }
+
+  .brand-title {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--cream);
+    letter-spacing: 0.3px;
+    line-height: 1;
+  }
+
+  .brand-sub {
+    font-size: 10px;
+    color: var(--gold);
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .countdown { text-align: right; }
+
+  .countdown-num {
+    font-family: var(--serif);
+    font-size: 30px;
+    font-weight: 900;
+    color: var(--gold-bright);
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+
+  .countdown-label {
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-top: 3px;
+    font-weight: 500;
+  }
+
+  /* MAIN */
+  .main {
+    position: fixed;
+    top: 68px; left: 0; right: 0; bottom: 0;
+    display: flex;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 440px;
+    min-width: 440px;
+    background: var(--bg-2);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .day-tabs {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 12px 12px 0 12px;
+    gap: 2px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-2);
+    scrollbar-width: none;
+  }
+  .day-tabs::-webkit-scrollbar { display: none; }
+
+  .day-tab {
+    min-width: 62px;
+    padding: 10px 10px 12px 10px;
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font-family: var(--sans);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .day-tab:hover { color: var(--cream); }
+
+  .day-tab.active {
+    color: var(--gold-bright);
+    border-bottom-color: var(--gold);
+  }
+
+  .day-tab-num {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 700;
+    display: block;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .day-tab-date {
+    font-size: 9px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .day-header {
+    padding: 22px 24px 20px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .day-header-overline {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .day-header-overline::before {
+    content: '';
+    width: 18px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  .day-header-title {
+    font-family: var(--serif);
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--cream);
+    line-height: 1.2;
+    letter-spacing: -0.3px;
+  }
+
+  .day-header-date {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-top: 6px;
+    font-weight: 400;
+  }
+
+  .day-stats {
+    display: flex;
+    gap: 14px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+
+  .day-stat {
+    font-size: 11px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .day-stat strong {
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  .spots-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px 14px 40px 14px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  .spots-list::-webkit-scrollbar { width: 6px; }
+  .spots-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  .spots-list::-webkit-scrollbar-track { background: transparent; }
+
+  .spot {
+    background: var(--bg-3);
+    border: 1px solid transparent;
+    border-radius: 12px;
+    padding: 13px 14px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    display: flex;
+    gap: 13px;
+    transition: all 0.2s ease;
+    position: relative;
+  }
+
+  .spot:hover {
+    border-color: var(--border-strong);
+    transform: translateX(2px);
+  }
+
+  .spot.active {
+    border-color: var(--gold);
+    background: rgba(200, 160, 74, 0.08);
+    box-shadow: 0 4px 20px rgba(200, 160, 74, 0.15);
+  }
+
+  .spot-icon {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  }
+
+  .spot-content { flex: 1; min-width: 0; }
+
+  .spot-time {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: var(--gold);
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+
+  .spot-name {
+    font-family: var(--serif);
+    font-size: 15.5px;
+    font-weight: 700;
+    color: var(--cream);
+    line-height: 1.2;
+    margin-bottom: 4px;
+    letter-spacing: -0.2px;
+  }
+
+  .spot-desc {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.45;
+  }
+
+  .spot-meta {
+    font-size: 10.5px;
+    color: var(--text-faint);
+    margin-top: 6px;
+    letter-spacing: 0.3px;
+    font-style: italic;
+  }
+
+  /* MAP */
+  .map-container { flex: 1; position: relative; }
+
+  #map {
+    width: 100%;
+    height: 100%;
+    background: var(--bg);
+  }
+
+  .map-legend {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(18, 25, 41, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    z-index: 500;
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    gap: 6px 16px;
+    font-size: 11px;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px rgba(0,0,0,0.2);
+  }
+
+  /* MAP CONTROLS */
+  .map-controls {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 500;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .map-btn {
+    background: rgba(18, 25, 41, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: var(--cream);
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-transform: uppercase;
+  }
+
+  .map-btn:hover {
+    background: rgba(200, 160, 74, 0.15);
+    border-color: var(--gold);
+    color: var(--gold-bright);
+  }
+
+  .map-btn.active {
+    background: var(--gold);
+    color: var(--bg);
+    border-color: var(--gold);
+  }
+
+  /* CUSTOM MARKER */
+  .marker-wrap {
+    background: transparent !important;
+    border: none !important;
+  }
+
+  .custom-marker {
+    width: 36px;
+    height: 36px;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--cream);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.5);
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+
+  .custom-marker:hover {
+    transform: rotate(-45deg) scale(1.1);
+  }
+
+  .custom-marker-icon {
+    transform: rotate(45deg);
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  .custom-marker-num {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    transform: rotate(45deg);
+    background: var(--bg);
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 700;
+    font-family: var(--sans);
+  }
+
+  /* LEAFLET OVERRIDES */
+  .leaflet-popup-content-wrapper {
+    background: var(--bg-2) !important;
+    color: var(--text) !important;
+    border-radius: 14px !important;
+    border: 1px solid var(--border-strong) !important;
+    box-shadow: var(--shadow-lg) !important;
+    padding: 0 !important;
+  }
+
+  .leaflet-popup-content {
+    margin: 16px 18px !important;
+    min-width: 240px !important;
+    line-height: 1.4 !important;
+  }
+
+  .leaflet-popup-tip {
+    background: var(--bg-2) !important;
+    border: 1px solid var(--border-strong) !important;
+  }
+
+  .leaflet-popup-close-button {
+    color: var(--text-dim) !important;
+    font-size: 22px !important;
+    padding: 6px 10px !important;
+  }
+
+  .popup-overline {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+
+  .popup-title {
+    font-family: var(--serif);
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--cream);
+    line-height: 1.2;
+    margin-bottom: 8px;
+    letter-spacing: -0.2px;
+  }
+
+  .popup-desc {
+    font-size: 12.5px;
+    color: var(--text-dim);
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+
+  .popup-meta {
+    font-size: 11px;
+    color: var(--text-faint);
+    margin-bottom: 12px;
+    font-style: italic;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .popup-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: var(--gold);
+    color: var(--bg) !important;
+    text-decoration: none !important;
+    border-radius: 8px;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    transition: all 0.15s;
+    text-transform: uppercase;
+  }
+
+  .popup-link:hover {
+    background: var(--gold-bright);
+    transform: translateY(-1px);
+  }
+
+  .popup-photo {
+    margin: -16px -18px 14px -18px;
+    height: 150px;
+    overflow: hidden;
+    border-radius: 14px 14px 0 0;
+    background: var(--bg-3);
+    position: relative;
+  }
+  .popup-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .popup-photo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 45%, rgba(18,25,41,0.7) 100%);
+    pointer-events: none;
+  }
+
+  .day-budget {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(200, 160, 74, 0.12);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    color: var(--gold);
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    margin-top: 12px;
+  }
+
+  .week-budget {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    margin-right: 20px;
+    padding-right: 20px;
+    border-right: 1px solid var(--border);
+  }
+  .week-budget-label {
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .week-budget-value {
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--cream);
+    line-height: 1;
+    margin-top: 2px;
+  }
+  @media (max-width: 480px) {
+    .week-budget { display: none; }
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+  }
+
+  .popup-info {
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .popup-info-row {
+    font-size: 11.5px;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 1.4;
+  }
+  .popup-info-row strong { color: var(--cream); font-weight: 600; }
+
+  .popup-booking {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 9px;
+    border-radius: 12px;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .popup-booking.required {
+    background: rgba(224, 120, 86, 0.15);
+    color: var(--terracotta);
+    border: 1px solid rgba(224, 120, 86, 0.35);
+  }
+  .popup-booking.recommended {
+    background: rgba(200, 160, 74, 0.15);
+    color: var(--gold);
+    border: 1px solid rgba(200, 160, 74, 0.35);
+  }
+  .popup-booking.none {
+    background: rgba(46, 196, 182, 0.15);
+    color: #2EC4B6;
+    border: 1px solid rgba(46, 196, 182, 0.35);
+  }
+
+  .popup-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 11px;
+    background: rgba(200, 160, 74, 0.12);
+    color: var(--gold-bright);
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-right: 6px;
+    margin-top: 8px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .popup-action-btn:hover {
+    background: var(--gold);
+    color: var(--bg);
+    border-color: var(--gold);
+  }
+
+  .reservation-confirmed {
+    background: rgba(46, 196, 182, 0.1);
+    border: 1px solid rgba(46, 196, 182, 0.3);
+    border-radius: 10px;
+    padding: 9px 12px;
+    margin: 8px 0;
+    font-size: 12px;
+    color: var(--cream);
+    line-height: 1.4;
+  }
+  .reservation-confirmed .resv-label {
+    color: #2EC4B6;
+    font-size: 9.5px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 3px;
+  }
+  .reservation-confirmed strong { color: var(--gold-bright); }
+
+  .gps-day-btn {
+    margin-top: 14px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #4DC3E0, #1B4965);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+    font-family: var(--sans);
+    box-shadow: 0 4px 14px rgba(77, 195, 224, 0.25);
+    transition: transform 0.15s;
+  }
+  .gps-day-btn:hover { transform: translateY(-2px); }
+  .gps-day-btn:active { transform: translateY(0); }
+
+  .day-weather {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: rgba(77, 195, 224, 0.06);
+    border-radius: 10px;
+    border: 1px solid rgba(77, 195, 224, 0.2);
+  }
+  .day-weather-icon { font-size: 26px; line-height: 1; }
+  .day-weather-text { display: flex; flex-direction: column; gap: 2px; }
+  .day-weather-temp { font-family: var(--serif); font-size: 15px; font-weight: 700; color: var(--cream); line-height: 1; }
+  .day-weather-detail { font-size: 10.5px; color: var(--text-dim); }
+
+  .day-weather-pending {
+    margin-top: 12px;
+    padding: 9px 14px;
+    background: rgba(237, 230, 214, 0.04);
+    border-radius: 10px;
+    font-size: 10.5px;
+    color: var(--text-faint);
+    border: 1px solid var(--border);
+    font-style: italic;
+  }
+
+  .day-tab-weather {
+    font-size: 9.5px;
+    margin-top: 3px;
+    color: var(--text-faint);
+  }
+  .day-tab.active .day-tab-weather { color: var(--gold); }
+
+  .spot-badges {
+    display: inline-flex;
+    gap: 4px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .spot-badge {
+    font-size: 8.5px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 5px;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .spot-badge.booked {
+    background: rgba(46, 196, 182, 0.2);
+    color: #2EC4B6;
+    border: 1px solid rgba(46, 196, 182, 0.4);
+  }
+  .spot-badge.required {
+    background: rgba(224, 120, 86, 0.15);
+    color: var(--terracotta);
+    border: 1px solid rgba(224, 120, 86, 0.3);
+  }
+  .spot-badge.visited {
+    background: rgba(46, 196, 182, 0.2);
+    color: #2EC4B6;
+    border: 1px solid rgba(46, 196, 182, 0.4);
+  }
+
+  .spot.visited .spot-icon { opacity: 0.5; }
+  .spot.visited .spot-name { text-decoration: line-through; text-decoration-color: rgba(46, 196, 182, 0.4); text-decoration-thickness: 1px; }
+
+  .journal-progress {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: rgba(46, 196, 182, 0.08);
+    border: 1px solid rgba(46, 196, 182, 0.25);
+    border-radius: 10px;
+    font-size: 11px;
+    color: #2EC4B6;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .journal-progress-bar {
+    flex: 1;
+    height: 4px;
+    background: rgba(46, 196, 182, 0.15);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .journal-progress-fill {
+    height: 100%;
+    background: #2EC4B6;
+    transition: width 0.3s;
+  }
+
+  .popup-journal {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  .popup-journal-note {
+    font-size: 12px;
+    color: var(--cream);
+    background: rgba(200, 160, 74, 0.08);
+    border-left: 3px solid var(--gold);
+    padding: 8px 10px;
+    border-radius: 0 8px 8px 0;
+    margin: 8px 0;
+    font-style: italic;
+    line-height: 1.4;
+  }
+
+  .planB-toggle {
+    margin-top: 10px;
+    width: 100%;
+    padding: 10px 14px;
+    background: rgba(255, 159, 67, 0.08);
+    border: 1px solid rgba(255, 159, 67, 0.3);
+    border-radius: 10px;
+    color: #FF9F43;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s;
+  }
+  .planB-toggle:hover { background: rgba(255, 159, 67, 0.15); }
+  .planB-toggle-icon { transition: transform 0.3s; }
+  .planB-toggle.open .planB-toggle-icon { transform: rotate(180deg); }
+
+  .planB-content {
+    margin-top: 8px;
+    padding: 12px 14px;
+    background: rgba(255, 159, 67, 0.05);
+    border: 1px solid rgba(255, 159, 67, 0.2);
+    border-radius: 10px;
+    display: none;
+  }
+  .planB-content.open { display: block; }
+  .planB-intro {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    line-height: 1.45;
+    font-style: italic;
+  }
+  .planB-alt {
+    padding: 8px 0;
+    border-top: 1px dashed rgba(255, 159, 67, 0.2);
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.45;
+  }
+  .planB-alt:first-child { border-top: none; padding-top: 0; }
+  .planB-alt strong { color: #FF9F43; font-weight: 700; }
+
+  /* HEADER ACTION BUTTONS */
+  .header-actions {
+    display: flex;
+    gap: 8px;
+    margin-right: 14px;
+  }
+  .header-action-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: rgba(200, 160, 74, 0.12);
+    border: 1px solid var(--border);
+    color: var(--gold-bright);
+    font-size: 17px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+  .header-action-btn:hover {
+    background: rgba(200, 160, 74, 0.25);
+    transform: translateY(-1px);
+  }
+  @media (max-width: 480px) {
+    .header-actions { margin-right: 8px; gap: 4px; }
+    .header-action-btn { width: 34px; height: 34px; font-size: 15px; }
+  }
+
+  /* MODAL */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 8, 14, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 5000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.2s ease;
+  }
+  .modal-backdrop.open { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal {
+    background: var(--bg-2);
+    border: 1px solid var(--border-strong);
+    border-radius: 20px;
+    box-shadow: var(--shadow-lg);
+    max-width: 560px;
+    width: 100%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: modalIn 0.3s ease;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: translateY(15px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .modal-header {
+    padding: 22px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .modal-title {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--cream);
+    letter-spacing: -0.3px;
+  }
+  .modal-close {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.15s;
+  }
+  .modal-close:hover { background: var(--bg-3); color: var(--cream); }
+
+  .modal-body {
+    padding: 22px 24px;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  /* SURVIVAL KIT */
+  .kit-section { margin-bottom: 24px; }
+  .kit-section:last-child { margin-bottom: 0; }
+  .kit-section-title {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .kit-section-title::before {
+    content: '';
+    width: 20px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  .kit-emergency {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: var(--bg-3);
+    border-radius: 10px;
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
+  .kit-emergency-label { color: var(--text-dim); flex: 1; }
+  .kit-emergency-value {
+    font-family: 'Courier New', monospace;
+    color: var(--gold-bright);
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .kit-emergency-value:hover { text-decoration: underline; }
+
+  .kit-phrases-group { margin-bottom: 16px; }
+  .kit-phrases-subtitle {
+    font-family: var(--serif);
+    font-size: 14px;
+    color: var(--cream);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .kit-phrase {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px dashed var(--border);
+    font-size: 12.5px;
+  }
+  .kit-phrase:last-child { border-bottom: none; }
+  .kit-phrase-fr { color: var(--text-dim); }
+  .kit-phrase-it { color: var(--gold-bright); font-weight: 500; font-style: italic; }
+
+  .kit-tip {
+    font-size: 12.5px;
+    color: var(--text);
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--border);
+    line-height: 1.5;
+  }
+  .kit-tip:last-child { border-bottom: none; }
+
+  /* QR SHARE */
+  .qr-wrap {
+    text-align: center;
+    padding: 10px;
+  }
+  .qr-code {
+    display: inline-block;
+    padding: 20px;
+    background: white;
+    border-radius: 16px;
+    margin-bottom: 16px;
+  }
+  .qr-code img { display: block; width: 240px; height: 240px; }
+  .qr-url {
+    font-size: 11.5px;
+    color: var(--text-dim);
+    word-break: break-all;
+    padding: 10px 14px;
+    background: var(--bg-3);
+    border-radius: 8px;
+    margin-bottom: 12px;
+    font-family: monospace;
+  }
+  .qr-help {
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .qr-help strong { color: var(--gold-bright); }
+
+  /* MODE AUJOURD'HUI */
+  .spot.current-now {
+    border-color: var(--gold-bright) !important;
+    background: rgba(200, 160, 74, 0.15) !important;
+    box-shadow: 0 0 0 2px rgba(200, 160, 74, 0.25);
+  }
+  .spot-now-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--bg);
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 5px;
+    margin-left: 6px;
+    letter-spacing: 0.4px;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  .today-indicator {
+    background: linear-gradient(135deg, rgba(200, 160, 74, 0.25), rgba(200, 160, 74, 0.08));
+    border: 1px solid var(--gold);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    font-size: 12px;
+    color: var(--gold-bright);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .today-indicator::before {
+    content: '●';
+    color: var(--gold);
+    animation: pulse 2s infinite;
+  }
+
+  .leaflet-control-zoom a {
+    background: rgba(18, 25, 41, 0.92) !important;
+    backdrop-filter: blur(20px);
+    color: var(--cream) !important;
+    border: 1px solid var(--border) !important;
+    font-family: var(--serif) !important;
+  }
+
+  .leaflet-control-zoom a:hover {
+    background: rgba(200, 160, 74, 0.15) !important;
+    color: var(--gold-bright) !important;
+  }
+
+  .leaflet-control-attribution {
+    background: rgba(11,15,26,0.8) !important;
+    color: var(--text-faint) !important;
+    font-size: 9px !important;
+    padding: 2px 8px !important;
+  }
+
+  .leaflet-control-attribution a { color: var(--gold) !important; }
+
+  .leaflet-tile {
+    filter: brightness(0.65) contrast(1.1) saturate(0.75) hue-rotate(-8deg);
+  }
+
+  /* MOBILE TOGGLE */
+  .mobile-toggle {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    z-index: 2000;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    cursor: pointer;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .sidebar {
+      width: 100%;
+      min-width: 0;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 900;
+      transform: translateX(0);
+      transition: transform 0.3s ease;
+      background: var(--bg-2);
+    }
+
+    .sidebar.hidden { transform: translateX(-100%); }
+
+    .main { display: block; }
+
+    .map-container {
+      position: absolute;
+      inset: 0;
+    }
+
+    .mobile-toggle { display: block; }
+
+    .map-legend {
+      bottom: 80px;
+      left: 10px;
+      right: 10px;
+      padding: 10px;
+      font-size: 10px;
+    }
+
+    .map-controls { right: 10px; top: 10px; }
+
+    .map-btn { padding: 8px 10px; font-size: 10px; }
+
+    .countdown-num { font-size: 24px; }
+    .brand-title { font-size: 17px; }
+    .brand-sub { font-size: 9px; }
+  }
+
+  @media (max-width: 480px) {
+    .header { padding: 0 14px; height: 60px; }
+    .main { top: 60px; }
+    .day-header { padding: 18px 20px; }
+    .day-header-title { font-size: 22px; }
+    .spots-list { padding: 12px; }
+  }
+
+  /* INTRO ANIMATION */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .spot { animation: fadeUp 0.35s ease backwards; }
+  .spot:nth-child(1) { animation-delay: 0.02s; }
+  .spot:nth-child(2) { animation-delay: 0.06s; }
+  .spot:nth-child(3) { animation-delay: 0.10s; }
+  .spot:nth-child(4) { animation-delay: 0.14s; }
+  .spot:nth-child(5) { animation-delay: 0.18s; }
+  .spot:nth-child(6) { animation-delay: 0.22s; }
+  .spot:nth-child(7) { animation-delay: 0.26s; }
+  .spot:nth-child(8) { animation-delay: 0.30s; }
+  .spot:nth-child(9) { animation-delay: 0.34s; }
+  .spot:nth-child(10) { animation-delay: 0.38s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="brand">
+    <span class="brand-flag">🇵🇹</span>
+    <div class="brand-text">
+      <div class="brand-title">Algarve</div>
+      <div class="brand-sub">23 au 27 juin 2026</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="header-actions">
+      <button class="header-action-btn" onclick="openSurvivalKit()" title="Kit de survie portugais">🆘</button>
+      <button class="header-action-btn" onclick="openShareQR()" title="Partager l'app">📤</button>
+    </div>
+    <div class="week-budget">
+      <div class="week-budget-label">Budget/pers</div>
+      <div class="week-budget-value" id="week-budget-value">—</div>
+    </div>
+    <div class="countdown">
+      <div class="countdown-num" id="countdown-num">—</div>
+      <div class="countdown-label" id="countdown-label">jours restants</div>
+    </div>
+  </div>
+</header>
+
+<div class="modal-backdrop" id="modal-backdrop" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">—</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<div class="main">
+  <aside class="sidebar" id="sidebar">
+    <nav class="day-tabs" id="day-tabs"></nav>
+    <div class="day-header" id="day-header"></div>
+    <div class="spots-list" id="spots-list"></div>
+  </aside>
+
+  <div class="map-container">
+    <div id="map"></div>
+
+    <div class="map-controls">
+      <button class="map-btn" id="btn-view-all" onclick="toggleViewAll()">Tout voir</button>
+      <button class="map-btn" id="btn-route" onclick="toggleRoute()">Itinéraire</button>
+    </div>
+
+    <div class="map-legend">
+      <div class="legend-item"><span class="legend-dot" style="background:#C8A04A"></span>Hôtel</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#E07856"></span>Resto</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#4DC3E0"></span>Plage</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#A978E0"></span>Culture</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#FF6B9D"></span>Insta</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#9D4E15"></span>Vin</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#FF9F43"></span>Nature</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#2EC4B6"></span>Bar</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#8A99B5"></span>Transport</div>
+    </div>
+  </div>
+</div>
+
+<button class="mobile-toggle" id="mobile-toggle" onclick="toggleSidebar()">Voir la carte</button>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+  // ========= DATA =========
+  const days = [
+    {
+      number: 1,
+      shortDate: "MAR 23",
+      fullDate: "Mardi 23 juin 2026",
+      title: "Arrivée nuit à Carvoeiro",
+      budget: { low: 25, typical: 45, high: 75 },
+      spots: [
+        { name: "Aéroport de Faro", category: "transport", time: "21h30", coords: [37.0144, -7.9659], description: "Atterrissage à Faro. Récupération de la voiture de location dans la zone Rent-a-Car au sous-sol terminal.", meta: "Terminal arrivées · A22 vers Carvoeiro" },
+        { name: "Route Faro → Carvoeiro", category: "transport", time: "22h15", coords: [37.0985, -8.4774], description: "55 min par l'A22 (Via do Infante), péage électronique automatique sur la voiture (compte ~5€). Sortie 4 (Lagoa), puis N125 + petites routes vers Carvoeiro.", meta: "55 min · péage A22 inclus" },
+        { name: "Wyndham Grand Carvoeiro 5*", category: "hotel", time: "23h15", coords: [37.0985, -8.4774], description: "Check-in tardif (la réception est ouverte 24h/24, préviens-les avant le vol). Chambre, douche, dodo. Demain on attaque les plus belles criques d'Algarve.", meta: "Sesmarias, 8400-525 Carvoeiro" }
+      ]
+    },
+    {
+      number: 2,
+      shortDate: "MER 24",
+      fullDate: "Mercredi 24 juin 2026",
+      title: "Carvoeiro et la grotte de Benagil",
+      budget: { low: 50, typical: 90, high: 140 },
+      planB: {
+        intro: "Pluie en juin sur l'Algarve c'est très rare, mais si grise mine matinale les grottes restent magiques en kayak couvert. Si vraiment averse, voilà les options indoor.",
+        alternatives: [
+          { name: "Spa Wyndham Grand Carvoeiro", desc: "Accès piscine intérieure chauffée + spa Sayanna Wellness inclus pour les résidents, massages portugais aux algues marines en supplément" },
+          { name: "Musée de Lagos (Forte da Ponta da Bandeira)", desc: "Forteresse 17e siècle, salle indoor sur l'histoire des Découvertes portugaises, 3€" },
+          { name: "Silves castelo et cathédrale", desc: "Château mauresque en grès rouge, 30 min de Carvoeiro, intérieur visitable, 2,80€" },
+          { name: "Cave Quinta dos Vales", desc: "Vignoble familial à Estômbar, dégustation 5 vins + visite guidée, 25€/pers, 15 min de route" }
+        ]
+      },
+      spots: [
+        { name: "Petit-déj Wyndham", category: "hotel", time: "09h00", coords: [37.0985, -8.4774], description: "Buffet sur la terrasse panoramique de l'hôtel face à l'océan. Vue plongeante sur la falaise et la mer, fruits frais, pasteis de nata, charcuterie portugaise.", meta: "Inclus avec la chambre" },
+        { name: "Algar Seco boardwalk", category: "insta", time: "10h30", coords: [37.0959, -8.4674], description: "Le sentier en bois sur les falaises ocre de Carvoeiro, 5 min en voiture du centre. Formations rocheuses sculptées par la mer, arches naturelles, escaliers cachés vers les criques en contrebas. Point d'observation et photos avec la mer turquoise.", meta: "Gratuit · accessible 24h/24" },
+        { name: "A Boneca Bar", category: "bar", time: "11h30", coords: [37.0958, -8.4666], description: "Bar troglodyte caché dans une grotte d'Algar Seco. Tu descends quelques marches dans la roche et tu débouches sur deux fenêtres ouvertes pile sur l'océan. Fresh juice, café, ambiance unique. Le spot insta absolu de Carvoeiro.", meta: "Caché dans Algar Seco · pas de résa" },
+        { name: "Praia do Carvalho", category: "plage", time: "12h30", coords: [37.0922, -8.4624], description: "Crique secrète accessible par un tunnel creusé dans la falaise. Sable doré, eau translucide, baignade tranquille entre deux falaises ocre. Beaucoup moins fréquentée que Marinha ou Benagil. Snorkeling top sur les côtés rocheux.", meta: "Tunnel d'accès · 5 min de l'hôtel" },
+        { name: "Praia da Marinha", category: "plage", time: "14h30", coords: [37.0904, -8.4129], description: "LA plage emblématique de l'Algarve, classée parmi les 10 plus belles d'Europe par le Guardian. Falaises ocre découpées en arches, eau turquoise transparente, fond clair. Descente par un escalier de 169 marches. Vue panoramique depuis le haut, bain depuis le sable.", meta: "⚠️ Spot insta n°1 Algarve" },
+        { name: "Sete Vales Suspensos", category: "nature", time: "16h00", coords: [37.0918, -8.4170], description: "Sentier littoral classé Best Walk in Europe, depuis Praia da Marinha jusqu'à Praia de Vale Centeanes. 6 km aller-retour sur falaise ocre, vue plongeante non-stop sur les criques cachées. Fais au moins 1 km pour le panorama, retour à la voiture ensuite.", meta: "Gratuit · baskets recommandées" },
+        { name: "Praia de Benagil + grotte", category: "insta", time: "17h30", coords: [37.0884, -8.4275], description: "La grotte la plus photographiée du monde. Cathédrale naturelle avec un trou rond dans la voûte qui laisse passer le soleil. Accès uniquement par la mer : tour en bateau (15€/pers, 30 min), kayak (25€/pers, 1h30) ou paddle. Le kayak permet d'entrer DANS la grotte. Réserve la veille via Taruga Tours ou GetYourGuide.", meta: "⚠️ Réserve d'avance · golden hour 18h" },
+        { name: "Boneca Bar sunset", category: "bar", time: "19h30", coords: [37.0958, -8.4666], description: "On y retourne au coucher du soleil. La fenêtre dans la roche cadre l'horizon orange parfaitement, c'est l'un des spots sunset les plus photogéniques de tout l'Algarve.", meta: "Algar Seco · gratuit" },
+        { name: "O Castelo Restaurant", category: "resto", time: "20h30", coords: [37.0950, -8.4690], description: "Restaurant en haut de la falaise de Carvoeiro avec terrasse panoramique sur l'océan. Cuisine portugaise contemporaine : poulpe grillé, bacalhau à brás, riz aux fruits de mer. Sunset spectaculaire depuis la terrasse. 35 à 50€/pers.", meta: "Rua do Casino · réserve" }
+      ]
+    },
+    {
+      number: 3,
+      shortDate: "JEU 25",
+      fullDate: "Jeudi 25 juin 2026",
+      title: "Lagos et le bout du monde",
+      budget: { low: 55, typical: 95, high: 145 },
+      planB: {
+        intro: "Très peu probable de météo grise en juin sur la côte ouest, mais si vraiment couvert tu remplaces les promenades en falaise par les options indoor.",
+        alternatives: [
+          { name: "Centro Ciência Viva de Lagos", desc: "Centre interactif sciences de la mer, parfait sous la pluie, 5€/pers" },
+          { name: "Forte da Ponta da Bandeira (Lagos)", desc: "Forteresse 17e siècle face à l'océan, intérieur visitable avec collection lapidaire, 3€" },
+          { name: "Villa romaine de Milreu", desc: "30 min de Lagos, ruines romaines couvertes d'un musée moderne, 2,50€" },
+          { name: "Mercado Municipal de Lagos", desc: "Marché couvert au rez-de-chaussée + restos étage, ambiance locale parfaite quand il fait moche" }
+        ]
+      },
+      spots: [
+        { name: "Petit-déj Wyndham", category: "hotel", time: "09h00", coords: [37.0985, -8.4774], description: "Tranquille à l'hôtel, on prend des forces. Journée plus chargée, route vers la côte ouest et Cabo de São Vicente.", meta: "Inclus" },
+        { name: "Route Lagos", category: "transport", time: "10h00", coords: [37.1028, -8.6738], description: "45 min par l'A22 (sortie 1) puis EN125. Tu peux aussi rouler en bord de mer pour le panorama mais 1h15 par les petites routes.", meta: "45 min via A22" },
+        { name: "Ponta da Piedade", category: "insta", time: "10h45", coords: [37.0816, -8.6692], description: "Le spot le plus spectaculaire de l'Algarve. Falaises ocre sculptées en arches, tunnels et grottes par 2000 ans de mer. Sentier de falaise en boardwalk, escaliers vers la mer, possibilité de mini-tour en bateau (15€, 30 min) pour entrer dans les grottes.", meta: "⚠️ Spot insta absolu · gratuit" },
+        { name: "Praia do Camilo", category: "plage", time: "12h00", coords: [37.0844, -8.6705], description: "200 marches en bois pour descendre, ça fait des cuisses mais la récompense en bas est dingue. Crique dorée séparée en deux par un rocher percé d'un tunnel naturel. Eau turquoise très claire. La carte postale absolue de Lagos.", meta: "200 marches · masque-tuba" },
+        { name: "Praia Dona Ana", category: "plage", time: "13h30", coords: [37.0880, -8.6715], description: "Une des plus belles plages d'Europe selon Condé Nast. Crique large, sable doré, falaises ocre découpées en piliers et arches qui sortent de l'eau. Beaucoup d'espace, escalier d'accès doux. Idéal pour le farniente après les efforts du Camilo.", meta: "Crique iconique · accès facile" },
+        { name: "Lagos vieille ville", category: "culture", time: "15h30", coords: [37.1019, -8.6735], description: "Centre historique entouré de remparts du 16e siècle. Rua 25 de Abril (rue piétonne), Igreja de Santo António (intérieur baroque doré spectaculaire, 3€), Praça Gil Eanes. Boutiques azulejos, savonneries, bars en terrasse.", meta: "Stationnement parking Mercado" },
+        { name: "Route Cabo São Vicente", category: "transport", time: "17h00", coords: [37.0231, -8.9979], description: "40 min vers le bout du monde. Tu traverses la steppe sauvage du Parc Naturel du Sud-Ouest Alentejano, paysages sauvages, vautours dans le ciel.", meta: "EN268 · sauvage" },
+        { name: "Cabo de São Vicente", category: "insta", time: "18h00", coords: [37.0231, -8.9979], description: "Le bout du monde. Pointe la plus au sud-ouest de l'Europe continentale, falaises de 75 mètres tombant à pic dans l'Atlantique. Phare emblématique de 1846, vagues qui s'écrasent en contrebas, vent salé. Sunset à couper le souffle, le dernier soleil d'Europe se couche ici.", meta: "⚠️ Sunset bout d'Europe · gratuit" },
+        { name: "A Eira do Mel", category: "resto", time: "20h30", coords: [37.0085, -8.9263], description: "À Vila do Bispo, 15 min du cap. Restaurant familial slow-food, recettes alentejanes traditionnelles : porc noir aux palourdes (cataplana), riz aux poulpe, cabri rôti. Carte de vins du sud-ouest. Ambiance auberge, prix doux. 30 à 40€/pers.", meta: "Estrada do Castelejo · réserve" },
+        { name: "Retour Wyndham", category: "transport", time: "22h30", coords: [37.0985, -8.4774], description: "1h15 de route en nocturne. Route déserte, ciel étoilé, fenêtres ouvertes.", meta: "Via A22" }
+      ]
+    },
+    {
+      number: 4,
+      shortDate: "VEN 26",
+      fullDate: "Vendredi 26 juin 2026",
+      title: "Falésia, farniente et Ferragudo",
+      budget: { low: 45, typical: 75, high: 115 },
+      planB: {
+        intro: "Si grise mine, on zappe Falésia (la plage rouge perd tout son intérêt sous nuages) et on bascule sur une journée slow Ferragudo + Silves + cooking class.",
+        alternatives: [
+          { name: "Silves castelo + cathédrale", desc: "Château mauresque en grès rouge construit au 11e siècle. Le mieux préservé d'Algarve. Vues panoramiques. 30 min de Carvoeiro, 2,80€" },
+          { name: "Cooking class portugaise à Carvoeiro", desc: "3h, 60-80€/pers : pasteis de bacalhau + cataplana + arroz de marisco. Plusieurs ateliers à Lagoa et Carvoeiro" },
+          { name: "Spa Wyndham Sayanna Wellness", desc: "Massage à 4 mains aux huiles essentielles, hammam, piscine intérieure chauffée. Idéal jour pluvieux farniente" },
+          { name: "Quinta dos Vales (cave + jardins)", desc: "Vignoble + galerie d'art en plein air, dégustation 5 vins, restaurant sur place. 15 min" }
+        ]
+      },
+      spots: [
+        { name: "Petit-déj Wyndham (relax)", category: "hotel", time: "09h30", coords: [37.0985, -8.4774], description: "On prend son temps ce matin. Journée plus douce après la grosse journée d'hier sur Lagos / Sagres.", meta: "Inclus · sans rush" },
+        { name: "Route Falésia", category: "transport", time: "10h45", coords: [37.0879, -8.1880], description: "40 min vers Albufeira, sortie 5 de l'A22. Suis les panneaux Olhos de Água puis Praia da Falésia parking nord (le moins fréquenté).", meta: "A22 sortie 5" },
+        { name: "Praia da Falésia", category: "plage", time: "11h30", coords: [37.0879, -8.1880], description: "6 km de plage de sable fin entre l'océan et des falaises rouges-ocre spectaculaires (jusqu'à 30m de haut). Pinèdes au sommet, sable doré-orangé, eau bleue, balade infinie en bord de mer. La plage la plus longue et photogénique d'Algarve. Le rouge des falaises explose au soleil de midi et au sunset.", meta: "⚠️ 6 km à parcourir · spot photo" },
+        { name: "Mirador Falésia top", category: "insta", time: "13h30", coords: [37.0890, -8.1850], description: "Petit sentier qui monte au sommet des falaises rouges depuis la plage, vue plongeante sur le sable doré et l'océan. Le panorama qui fait toutes les photos cartes postales d'Algarve.", meta: "Sentier de falaise · gratuit" },
+        { name: "Retour piscine Wyndham", category: "hotel", time: "14h45", coords: [37.0985, -8.4774], description: "Après-midi piscine + livre + apéro à l'hôtel. Le Wyndham a 3 piscines et une terrasse panoramique sur la falaise. Farniente programmé.", meta: "Piscine + spa accès libre" },
+        { name: "Ferragudo village", category: "culture", time: "17h30", coords: [37.1182, -8.5232], description: "Village de pêcheurs préservé sur la rivière Arade, 10 min de Carvoeiro. Maisons blanches aux portes turquoise, ruelles pavées en pente vers le port, place Igreja Nossa Senhora da Conceição. Authentique, encore peu touristique. Photos splendides en fin d'aprem quand le soleil dore les façades.", meta: "Stationnement entrée village" },
+        { name: "Praia dos Caneiros", category: "plage", time: "18h30", coords: [37.1054, -8.5181], description: "Crique dorée à 5 min de Ferragudo, accessible par un escalier dans la falaise. Sable fin, eau translucide, falaises ocre. L'un des meilleurs spots sunset d'Algarve : le soleil descend pile derrière les rochers du Leixão da Gaivota, mer qui vire à l'orange.", meta: "⚠️ Sunset spot · accès escalier" },
+        { name: "Sueste Restaurant", category: "resto", time: "20h30", coords: [37.1227, -8.5223], description: "Restaurant face à la marina de Ferragudo, sur le port pêcheurs. Poisson grillé au charbon (sardines, dorade, bar), arroz de marisco (riz aux fruits de mer), arroz de tamboril (lotte). Recommandé par tous les guides Portugal. Vue sur Portimão de l'autre côté du fleuve. 30 à 45€/pers.", meta: "Rua da Hortinha 36 · réserve" }
+      ]
+    },
+    {
+      number: 5,
+      shortDate: "SAM 27",
+      fullDate: "Samedi 27 juin 2026",
+      title: "Adeus Algarve",
+      budget: { low: 15, typical: 25, high: 40 },
+      spots: [
+        { name: "Réveil + check-out", category: "hotel", time: "04h00", coords: [37.0985, -8.4774], description: "Check-out express, idéalement réglé la veille à la réception. Valises dans la voiture, dernier coup d'œil sur l'océan depuis le balcon avant de partir.", meta: "Demande check-out anticipé la veille" },
+        { name: "Route Faro", category: "transport", time: "04h45", coords: [37.0500, -8.0500], description: "55 min par l'A22 (Via do Infante). Aucun trafic à cette heure, route quasi déserte. Tu remontes vers l'est avec le ciel qui rosit doucement.", meta: "55 min · A22" },
+        { name: "Rendu voiture Faro", category: "transport", time: "05h45", coords: [37.0144, -7.9659], description: "Parking de location voiture au sous-sol du terminal aéroport, plein d'essence à faire avant (station BP/Galp à 2 min de la sortie A22). 15 min pour le rendu et l'enregistrement aéroport.", meta: "Plein essence avant" },
+        { name: "Décollage", category: "transport", time: "07h20", coords: [37.0144, -7.9659], description: "Vol retour. Adeus Algarve. Tu reviendras forcément.", meta: "Embarquement 06h45" }
+      ]
+    }
+  ];
+
+  const SPOT_METADATA = {
+    "Wyndham Grand Carvoeiro 5*":       { hours: "check-in 15h · check-out 11h · réception 24h/24", booking: "required", price: "déjà réservé", bookingUrl: "https://www.wyndhamhotels.com/wyndham-grand/carvoeiro-portugal/wyndham-grand-algarve" },
+    "Algar Seco boardwalk":             { hours: "24h/24 accessible", booking: "none", price: "gratuit" },
+    "A Boneca Bar":                     { hours: "10h-19h tous les jours (été)", booking: "none", rating: 4.5 },
+    "Boneca Bar sunset":                { hours: "ferme à 19h-19h30 selon coucher du soleil", booking: "none", rating: 4.5 },
+    "Praia do Carvalho":                { hours: "24h/24 plage libre", booking: "none" },
+    "Praia da Marinha":                 { hours: "24h/24 plage libre · parking gratuit", booking: "none", price: "gratuit · spot top 10 Europe" },
+    "Sete Vales Suspensos":             { hours: "24h/24 sentier libre", booking: "none", price: "gratuit · 6 km AR" },
+    "Praia de Benagil + grotte":        { hours: "tours bateau 09h-18h · kayak 08h-17h", booking: "required", lead: "1 à 2 semaines", price: "kayak 25€ · bateau 15€/pers", bookingUrl: "https://www.taruga-tours.com/" },
+    "O Castelo Restaurant":             { hours: "12h30-15h · 18h30-22h30 tous les jours", booking: "recommended", lead: "3 à 5 jours", rating: 4.5, bookingUrl: "https://www.tripadvisor.com/Restaurant_Review-g189115-d3559395-Reviews-O_Castelo-Carvoeiro_Faro_District_Algarve.html" },
+    "Ponta da Piedade":                 { hours: "24h/24 sentier libre · tours bateau 09h-18h", booking: "none", price: "gratuit · bateau 15€/pers" },
+    "Praia do Camilo":                  { hours: "24h/24 · escalier 09h-21h en été", booking: "none", price: "gratuit · 200 marches" },
+    "Praia Dona Ana":                   { hours: "24h/24 plage libre", booking: "none", price: "gratuit · top Condé Nast" },
+    "Lagos vieille ville":              { hours: "24h/24 · monuments 09h-19h", booking: "none" },
+    "Cabo de São Vicente":              { hours: "24h/24 · phare visite 10h-18h fermé lun", booking: "none", price: "gratuit · sunset 21h fin juin" },
+    "A Eira do Mel":                    { hours: "12h-15h · 19h-22h (fermé dim soir + lun)", booking: "required", lead: "1 semaine", rating: 4.6, bookingUrl: "https://aeiradomel.com/" },
+    "Praia da Falésia":                 { hours: "24h/24 plage libre · parking gratuit", booking: "none", price: "gratuit · 6 km de plage" },
+    "Mirador Falésia top":              { hours: "24h/24 sentier libre", booking: "none" },
+    "Ferragudo village":                { hours: "24h/24 village ouvert", booking: "none" },
+    "Praia dos Caneiros":               { hours: "24h/24 plage libre", booking: "none", price: "gratuit · top sunset" },
+    "Sueste Restaurant":                { hours: "12h-15h · 19h-22h30 (fermé dim soir)", booking: "required", lead: "1 à 2 semaines", rating: 4.6, bookingUrl: "https://www.sueste.pt/" },
+    "Aéroport de Faro":                 { hours: "24h/24 · location voitures 06h-00h", booking: "required", price: "voiture déjà réservée" }
+  };
+
+  const categoryMeta = {
+    hotel:     { color: '#C8A04A', icon: '🏨', label: 'Hôtel' },
+    resto:     { color: '#E07856', icon: '🍝', label: 'Restaurant' },
+    plage:     { color: '#4DC3E0', icon: '🏖️', label: 'Plage' },
+    culture:   { color: '#A978E0', icon: '🏛️', label: 'Culture' },
+    insta:     { color: '#FF6B9D', icon: '📸', label: 'Spot insta' },
+    vin:       { color: '#9D4E15', icon: '🍷', label: 'Vin' },
+    nature:    { color: '#FF9F43', icon: '🌋', label: 'Nature' },
+    bar:       { color: '#2EC4B6', icon: '🍸', label: 'Bar' },
+    transport: { color: '#8A99B5', icon: '🚗', label: 'Transport' }
+  };
+
+  // ========= MAP =========
+  const map = L.map('map', {
+    zoomControl: true,
+    attributionControl: true
+  }).setView([37.10, -8.50], 10);
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    attribution: '© OpenStreetMap · © CARTO',
+    subdomains: 'abcd',
+    maxZoom: 19
+  }).addTo(map);
+
+  let currentDay = 0;
+  let markers = [];
+  let routeLine = null;
+  let viewAll = false;
+  let showRoute = true;
+
+  function createMarker(spot, idx, showNum = true) {
+    const meta = categoryMeta[spot.category];
+    const html = `
+      <div class="custom-marker" style="background:${meta.color}">
+        <span class="custom-marker-icon">${meta.icon}</span>
+        ${showNum ? `<span class="custom-marker-num">${idx + 1}</span>` : ''}
+      </div>
+    `;
+    return L.divIcon({
+      className: 'marker-wrap',
+      html: html,
+      iconSize: [36, 36],
+      iconAnchor: [18, 36],
+      popupAnchor: [0, -36]
+    });
+  }
+
+  function buildMapsUrl(spot) {
+    if (spot.gmaps) return spot.gmaps;
+    const meta = spot.meta || '';
+    const firstPart = meta.split('·')[0].trim();
+    const isAddress = /^(Via|Viale|Piazza|Corso|Vico|Vicolo|Strada|Lungomare|Molo|Contrada)/i.test(firstPart);
+    const address = isAddress ? firstPart : '';
+
+    const combined = (spot.name + ' ' + meta + ' ' + (spot.description || '')).toLowerCase();
+    let city = 'Carvoeiro Algarve';
+    if (combined.includes('faro') || combined.includes('aéroport')) city = 'Faro Algarve';
+    else if (combined.includes('lagos') || combined.includes('camilo') || combined.includes('dona ana') || combined.includes('piedade')) city = 'Lagos Algarve';
+    else if (combined.includes('benagil')) city = 'Benagil Algarve';
+    else if (combined.includes('marinha')) city = 'Caramujeira Algarve';
+    else if (combined.includes('falésia') || combined.includes('falesia') || combined.includes('olhos de água')) city = 'Albufeira Algarve';
+    else if (combined.includes('ferragudo') || combined.includes('caneiros') || combined.includes('sueste')) city = 'Ferragudo Algarve';
+    else if (combined.includes('cabo') || combined.includes('são vicente') || combined.includes('sao vicente') || combined.includes('eira do mel') || combined.includes('vila do bispo') || combined.includes('sagres')) city = 'Sagres Algarve';
+    else if (combined.includes('silves')) city = 'Silves Algarve';
+    else if (combined.includes('carvalho')) city = 'Vale Centeanes Algarve';
+    else if (combined.includes('sete vales')) city = 'Caramujeira Algarve';
+    else if (combined.includes('algar seco') || combined.includes('boneca')) city = 'Carvoeiro Algarve';
+    else if (combined.includes('wyndham') || combined.includes('castelo')) city = 'Carvoeiro Algarve';
+
+    const query = `${spot.name} ${address} ${city} Portugal`.replace(/\s+/g, ' ').trim();
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+  }
+
+  const PHOTO_TAG_MAP = [
+    [/benagil/i, 'benagil,cave,algarve'],
+    [/marinha/i, 'praia+da+marinha,algarve,cliffs'],
+    [/algar seco/i, 'algar+seco,carvoeiro,boardwalk'],
+    [/boneca/i, 'algarve,grotto,bar'],
+    [/carvalho/i, 'algarve,beach,cove'],
+    [/sete vales|mirador falésia top/i, 'algarve,cliffs,trail'],
+    [/ponta da piedade/i, 'ponta+da+piedade,lagos,cliffs'],
+    [/camilo/i, 'praia+do+camilo,lagos,cove'],
+    [/dona ana/i, 'praia+dona+ana,lagos,beach'],
+    [/lagos vieille|lagos.*ville/i, 'lagos,portugal,oldtown'],
+    [/cabo|são vicente|sao vicente/i, 'cabo+sao+vicente,lighthouse,cliffs'],
+    [/eira do mel|sagres/i, 'portuguese,food,seafood'],
+    [/falésia|falesia/i, 'praia+da+falesia,red+cliffs,algarve'],
+    [/ferragudo/i, 'ferragudo,fishing+village,portugal'],
+    [/caneiros/i, 'praia+caneiros,algarve,sunset'],
+    [/sueste/i, 'portuguese,seafood,grill'],
+    [/o castelo/i, 'algarve,restaurant,sunset'],
+    [/wyndham|hotel|petit-déj|grasse mat|piscine/i, 'algarve,resort,pool'],
+    [/faro|aéroport|décollage/i, 'faro,portugal,airport'],
+    [/route|départ|retour/i, 'algarve,road,coast']
+  ];
+
+  function getPhotoTags(spot) {
+    const key = spot.name + ' ' + (spot.meta || '');
+    for (const [pattern, tags] of PHOTO_TAG_MAP) {
+      if (pattern.test(key)) return tags;
+    }
+    const fallbacks = {
+      resto: 'portuguese,food,seafood',
+      plage: 'algarve,beach,cliffs',
+      culture: 'algarve,portugal,village',
+      nature: 'algarve,coast,cliffs',
+      insta: 'algarve,scenic,cliffs',
+      vin: 'portugal,vineyard,wine',
+      bar: 'cocktail,bar,algarve',
+      hotel: 'algarve,resort,terrace',
+      transport: ''
+    };
+    return fallbacks[spot.category] || 'algarve,portugal';
+  }
+
+  function hashString(str) {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) {
+      h = ((h << 5) - h) + str.charCodeAt(i);
+      h |= 0;
+    }
+    return Math.abs(h);
+  }
+
+  function getPhotoUrl(spot) {
+    const journal = getJournal()[spot.name];
+    if (journal?.photo) return journal.photo;
+    if (spot.photo === false) return null;
+    if (spot.photo) return spot.photo;
+    const tags = getPhotoTags(spot);
+    if (!tags) return null;
+    const lock = hashString(spot.name + (spot.meta || ''));
+    return `https://loremflickr.com/600/300/${tags}?lock=${lock}`;
+  }
+
+  // ======== JOURNAL DE VOYAGE ========
+  const JOURNAL_KEY = 'algarve-2026-journal';
+
+  function getJournal() {
+    try { return JSON.parse(localStorage.getItem(JOURNAL_KEY) || '{}'); }
+    catch { return {}; }
+  }
+
+  function saveJournalEntry(key, patch) {
+    const all = getJournal();
+    all[key] = { ...(all[key] || {}), ...patch };
+    Object.keys(all[key]).forEach(k => {
+      if (all[key][k] === undefined || all[key][k] === null || all[key][k] === '') delete all[key][k];
+    });
+    if (Object.keys(all[key]).length === 0) delete all[key];
+    try {
+      localStorage.setItem(JOURNAL_KEY, JSON.stringify(all));
+    } catch (e) {
+      alert('Stockage plein. Supprime une photo ou réduis les notes pour faire de la place.');
+    }
+  }
+
+  window.toggleVisited = function(spotName) {
+    const current = getJournal()[spotName]?.visited;
+    saveJournalEntry(spotName, { visited: !current });
+    renderMapMarkers();
+    renderSpots();
+    renderDayHeader();
+  };
+
+  window.editSpotNote = function(spotName) {
+    const current = getJournal()[spotName]?.note || '';
+    const note = prompt(`Note perso pour "${spotName}" :\n(vide pour supprimer)`, current);
+    if (note === null) return;
+    saveJournalEntry(spotName, { note: note.trim() || undefined });
+    renderMapMarkers();
+  };
+
+  window.uploadSpotPhoto = function(spotName) {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (file.size > 2.5 * 1024 * 1024) {
+        alert('Photo trop grande (max 2.5 MB). Compresse-la avant d\'uploader.');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        saveJournalEntry(spotName, { photo: evt.target.result });
+        renderMapMarkers();
+      };
+      reader.readAsDataURL(file);
+    };
+    input.click();
+  };
+
+  window.removeSpotPhoto = function(spotName) {
+    if (confirm('Supprimer ta photo perso de ce spot ?')) {
+      saveJournalEntry(spotName, { photo: undefined });
+      renderMapMarkers();
+    }
+  };
+
+  function getDayJournalStats(day) {
+    const journal = getJournal();
+    const total = day.spots.length;
+    const visited = day.spots.filter(s => journal[s.name]?.visited).length;
+    return { visited, total, pct: total > 0 ? Math.round((visited / total) * 100) : 0 };
+  }
+
+  // ======== MODAL SYSTEM ========
+  function openModal(title, html) {
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-body').innerHTML = html;
+    document.getElementById('modal-backdrop').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  window.closeModal = function() {
+    document.getElementById('modal-backdrop').classList.remove('open');
+    document.body.style.overflow = '';
+  };
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') window.closeModal(); });
+
+  // ======== KIT DE SURVIE ========
+  const SURVIVAL_KIT = {
+    urgences: [
+      { label: "Numéro unique européen", value: "112" },
+      { label: "SOS Médecins Algarve (24h/24)", value: "+351 282 460 080" },
+      { label: "Hôpital de Portimão (CHUA)", value: "+351 282 450 300" },
+      { label: "Police de proximité Carvoeiro (GNR)", value: "+351 282 350 750" },
+      { label: "Pompiers Lagoa", value: "+351 282 380 290" },
+      { label: "Sauvetage en mer (Capitania Portimão)", value: "+351 282 405 580" },
+      { label: "Ambassade France Lisbonne", value: "+351 213 939 100" },
+      { label: "Consulat France Lisbonne (24h/24)", value: "+351 213 939 292" },
+      { label: "Urgence AVS France (depuis Portugal)", value: "+33 9 70 82 17 84" }
+    ],
+    phrases: [
+      { section: "Général", items: [
+        { fr: "Bonjour", it: "Bom dia" },
+        { fr: "Bonsoir", it: "Boa tarde / Boa noite" },
+        { fr: "Merci beaucoup", it: "Muito obrigado / obrigada" },
+        { fr: "S'il vous plaît", it: "Por favor" },
+        { fr: "Excusez-moi", it: "Com licença / Desculpe" },
+        { fr: "Je ne parle pas portugais", it: "Não falo português" },
+        { fr: "Parlez-vous anglais ?", it: "Fala inglês ?" },
+        { fr: "Je ne comprends pas", it: "Não percebo" }
+      ]},
+      { section: "Au restaurant", items: [
+        { fr: "Une table pour 2 personnes", it: "Uma mesa para duas pessoas" },
+        { fr: "J'ai une réservation au nom de…", it: "Tenho uma reserva em nome de…" },
+        { fr: "La carte s'il vous plaît", it: "A ementa, por favor" },
+        { fr: "Je voudrais…", it: "Queria…" },
+        { fr: "Qu'est-ce que vous recommandez ?", it: "O que recomenda ?" },
+        { fr: "Eau plate / gazeuse", it: "Água sem gás / com gás" },
+        { fr: "C'est délicieux !", it: "Está delicioso !" },
+        { fr: "L'addition s'il vous plaît", it: "A conta, por favor" },
+        { fr: "Je suis allergique à…", it: "Sou alérgico a…" },
+        { fr: "Sans gluten", it: "Sem glúten" }
+      ]},
+      { section: "Shopping", items: [
+        { fr: "Combien ça coûte ?", it: "Quanto custa ?" },
+        { fr: "C'est trop cher", it: "É caro demais" },
+        { fr: "Vous acceptez la carte ?", it: "Aceita cartão ?" },
+        { fr: "Je vais réfléchir, merci", it: "Vou pensar, obrigado" },
+        { fr: "Où sont les toilettes ?", it: "Onde fica a casa de banho ?" }
+      ]},
+      { section: "Plage / Voiture / Transport", items: [
+        { fr: "Où est la plage ?", it: "Onde fica a praia ?" },
+        { fr: "Un transat + un parasol", it: "Uma espreguiçadeira e um chapéu de sol" },
+        { fr: "Station essence", it: "Bomba de gasolina" },
+        { fr: "Le plein s'il vous plaît", it: "Cheio, por favor" },
+        { fr: "Où est le parking ?", it: "Onde fica o estacionamento ?" },
+        { fr: "L'autoroute", it: "A auto-estrada" },
+        { fr: "Le péage", it: "A portagem" }
+      ]},
+      { section: "Urgence", items: [
+        { fr: "À l'aide !", it: "Socorro !" },
+        { fr: "Appelez la police", it: "Chame a polícia" },
+        { fr: "Appelez une ambulance", it: "Chame uma ambulância" },
+        { fr: "Je ne me sens pas bien", it: "Não me sinto bem" },
+        { fr: "Où est l'hôpital ?", it: "Onde fica o hospital ?" }
+      ]}
+    ],
+    tipping: [
+      "Pourboire JAMAIS obligatoire au Portugal.",
+      "Au resto : arrondir l'addition ou laisser 5 à 10% pour un service marquant.",
+      "Café au comptoir : 0,10 à 0,20€ de monnaie.",
+      "Taxi : arrondir à l'euro supérieur, max 5%.",
+      "Hôtel : 1 à 2€ au porteur, 1 à 2€/jour au ménage (optionnel).",
+      "Tour en bateau / kayak : 2 à 5€/pers au guide si la sortie est top."
+    ],
+    culture: [
+      "Restaurants servent 12h-15h le midi, 19h-22h30 le soir.",
+      "Beaucoup d'établissements ferment le lundi (jour de repos).",
+      "Eau du robinet potable mais quasi tout le monde commande de l'eau en bouteille.",
+      "Le « couvert » (pain, olives, fromage) posé sur la table est PAYANT, refuse-le si tu n'en veux pas (~2-4€).",
+      "Pasteis de nata = à manger encore tiède, saupoudrés de cannelle. Le vrai = Manteigaria ou Pasteis de Belém.",
+      "Les autoroutes ont un péage électronique : Wyndham doit te louer un transpondeur ou il faut s'enregistrer en ligne.",
+      "L'Algarve roule à droite. Vitesse autoroute : 120 km/h, route nationale : 90 km/h, ville : 50 km/h.",
+      "Crème solaire SPF 50 obligatoire en juin (UV index 9-10), sable des plages très chaud à midi."
+    ]
+  };
+
+  window.openSurvivalKit = function() {
+    let html = `<div class="kit-section">
+      <div class="kit-section-title">Numéros d'urgence</div>`;
+    SURVIVAL_KIT.urgences.forEach(u => {
+      html += `<div class="kit-emergency">
+        <span class="kit-emergency-label">${u.label}</span>
+        <a class="kit-emergency-value" href="tel:${u.value.replace(/\s/g, '')}">${u.value}</a>
+      </div>`;
+    });
+    html += `</div>`;
+
+    html += `<div class="kit-section">
+      <div class="kit-section-title">Phrases portugaises essentielles</div>`;
+    SURVIVAL_KIT.phrases.forEach(group => {
+      html += `<div class="kit-phrases-group">
+        <div class="kit-phrases-subtitle">${group.section}</div>`;
+      group.items.forEach(p => {
+        html += `<div class="kit-phrase">
+          <span class="kit-phrase-fr">${p.fr}</span>
+          <span class="kit-phrase-it">${p.it}</span>
+        </div>`;
+      });
+      html += `</div>`;
+    });
+    html += `</div>`;
+
+    html += `<div class="kit-section">
+      <div class="kit-section-title">Pourboire / Tipping</div>`;
+    SURVIVAL_KIT.tipping.forEach(t => { html += `<div class="kit-tip">${t}</div>`; });
+    html += `</div>`;
+
+    html += `<div class="kit-section">
+      <div class="kit-section-title">Culture à savoir</div>`;
+    SURVIVAL_KIT.culture.forEach(t => { html += `<div class="kit-tip">${t}</div>`; });
+    html += `</div>`;
+
+    openModal("🆘 Kit de survie portugais", html);
+  };
+
+  // ======== QR CODE PARTAGE ========
+  window.openShareQR = function() {
+    const url = 'https://lessecretsdegeoffrey.github.io/algarve-2026/';
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(url)}&margin=10&color=0B0F1A&bgcolor=FFFFFF`;
+    const html = `
+      <div class="qr-wrap">
+        <div class="qr-code"><img src="${qrUrl}" alt="QR code Algarve 2026"></div>
+        <div class="qr-url">${url}</div>
+        <div class="qr-help">
+          <strong>Sur l'iPhone de ta copine</strong> : ouvre l'appareil photo, vise ce QR code, tape sur la notification qui apparaît. L'app s'ouvre direct.<br><br>
+          Ensuite : <strong>Safari → Partage → Sur l'écran d'accueil</strong> pour l'installer comme une vraie app.
+        </div>
+      </div>
+    `;
+    openModal("📤 Partager avec ta copine", html);
+  };
+
+  // ======== MODE AUJOURD'HUI ========
+  function getCurrentTripDayIdx() {
+    const tripStart = new Date('2026-06-23T00:00:00');
+    const now = new Date();
+    const diffMs = now - tripStart;
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    if (diffDays < 0) return -1;
+    if (diffDays > 4) return -1;
+    return diffDays;
+  }
+
+  function parseSpotTime(timeStr) {
+    const match = timeStr.match(/(\d{1,2})h(\d{0,2})/);
+    if (!match) return null;
+    return parseInt(match[1]) * 60 + parseInt(match[2] || '0');
+  }
+
+  function getCurrentSpotIdx(day) {
+    const now = new Date();
+    const nowMin = now.getHours() * 60 + now.getMinutes();
+    let currentIdx = -1;
+    day.spots.forEach((s, i) => {
+      const t = parseSpotTime(s.time);
+      if (t !== null && t <= nowMin) currentIdx = i;
+    });
+    return currentIdx;
+  }
+
+  // ======== EMAIL RÉSA PORTUGAIS ========
+  window.copyItalianEmail = function(spotName) {
+    const resv = getReservations()[spotName];
+    const date = resv?.date || '[DATE]';
+    const time = resv?.time || '[HEURE]';
+    const name = resv?.name || 'Masson';
+    const subject = encodeURIComponent(`Pedido de reserva - ${spotName}`);
+    const body = encodeURIComponent(
+`Bom dia,
+
+gostaria de reservar uma mesa para 2 pessoas no ${spotName} para o dia ${date} às ${time}.
+
+Somos um casal francês em viagem ao Algarve de 23 a 27 de junho de 2026.
+
+Poderia confirmar a disponibilidade, por favor ?
+
+Obrigado desde já.
+
+Com os melhores cumprimentos,
+${name}`);
+    const mailto = `mailto:?subject=${subject}&body=${body}`;
+    window.location.href = mailto;
+  };
+
+  function dayBudget(day) {
+    return day.budget || { low: 0, typical: 0, high: 0 };
+  }
+
+  function weekBudget() {
+    return days.reduce((acc, d) => {
+      const b = dayBudget(d);
+      return { low: acc.low + b.low, typical: acc.typical + b.typical, high: acc.high + b.high };
+    }, { low: 0, typical: 0, high: 0 });
+  }
+
+  function formatEuro(n) {
+    return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n);
+  }
+
+  // ======== BOOKINGS STORAGE ========
+  const RESV_KEY = 'algarve-2026-reservations';
+
+  function getReservations() {
+    try { return JSON.parse(localStorage.getItem(RESV_KEY) || '{}'); }
+    catch { return {}; }
+  }
+
+  function saveReservation(key, data) {
+    const all = getReservations();
+    if (data === null) delete all[key]; else all[key] = data;
+    localStorage.setItem(RESV_KEY, JSON.stringify(all));
+  }
+
+  window.promptReservation = function(spotName) {
+    const all = getReservations();
+    const existing = all[spotName];
+    const date = prompt('Date de réservation (ex: 25/08/2026)', existing?.date || '25/08/2026');
+    if (date === null || date === '') return;
+    const time = prompt('Heure (ex: 20h30)', existing?.time || '20h30');
+    if (time === null || time === '') return;
+    const name = prompt('Nom de la réservation', existing?.name || 'Masson');
+    if (name === null || name === '') return;
+    saveReservation(spotName, { date, time, name, savedAt: new Date().toISOString() });
+    renderMapMarkers();
+    renderSpots();
+  };
+
+  window.cancelReservation = function(spotName) {
+    if (confirm('Supprimer cette réservation ?')) {
+      saveReservation(spotName, null);
+      renderMapMarkers();
+      renderSpots();
+    }
+  };
+
+  // ======== BOOKING INFO ========
+  function getBookingLabel(level) {
+    if (level === 'required') return '🔴 Réservation obligatoire';
+    if (level === 'recommended') return '🟡 Réservation recommandée';
+    if (level === 'none') return '🟢 Sans réservation';
+    return null;
+  }
+
+  function buildInfoSection(spot) {
+    const info = SPOT_METADATA[spot.name];
+    const resv = getReservations()[spot.name];
+    let html = '';
+
+    if (info || resv) {
+      html += '<div class="popup-info">';
+      if (info?.rating) html += `<div class="popup-info-row">⭐ <strong>${info.rating}/5</strong> <span style="opacity:0.7">(TripAdvisor / reviews)</span></div>`;
+      if (info?.hours) html += `<div class="popup-info-row">🕐 <span>${info.hours}</span></div>`;
+      if (info?.price) html += `<div class="popup-info-row">💶 <span>${info.price}</span></div>`;
+      if (info?.booking) {
+        const leadText = info.lead ? ` · ${info.lead}` : '';
+        html += `<div><span class="popup-booking ${info.booking}">${getBookingLabel(info.booking)}${leadText}</span></div>`;
+      }
+      html += '</div>';
+
+      if (resv) {
+        html += `
+          <div class="reservation-confirmed">
+            <span class="resv-label">✓ Réservé</span>
+            <strong>${resv.date}</strong> à <strong>${resv.time}</strong> · ${resv.name}
+          </div>
+          <button class="popup-action-btn" onclick="promptReservation('${spot.name.replace(/'/g, "\\'")}')">✏️ Modifier</button>
+          <button class="popup-action-btn" onclick="cancelReservation('${spot.name.replace(/'/g, "\\'")}')">🗑 Annuler</button>
+        `;
+      } else if (info?.booking === 'required' || info?.booking === 'recommended') {
+        html += `<button class="popup-action-btn" onclick="promptReservation('${spot.name.replace(/'/g, "\\'")}')">📝 J'ai réservé</button>`;
+        if (info?.bookingUrl) html += `<a class="popup-action-btn" target="_blank" href="${info.bookingUrl}">🔗 Réserver en ligne</a>`;
+        html += `<button class="popup-action-btn" onclick="copyItalianEmail('${spot.name.replace(/'/g, "\\'")}')">📧 Email en portugais</button>`;
+      }
+    }
+    return html;
+  }
+
+  function buildJournalSection(spot) {
+    const journal = getJournal()[spot.name];
+    const safeName = spot.name.replace(/'/g, "\\'");
+    const visited = journal?.visited;
+    const note = journal?.note;
+    const hasPhoto = !!journal?.photo;
+    let html = '<div class="popup-journal">';
+    html += `<button class="popup-action-btn" onclick="toggleVisited('${safeName}')">${visited ? '✓ Visité' : '○ Marquer visité'}</button>`;
+    html += `<button class="popup-action-btn" onclick="editSpotNote('${safeName}')">${note ? '📝 Éditer note' : '📝 Ajouter note'}</button>`;
+    html += `<button class="popup-action-btn" onclick="${hasPhoto ? `removeSpotPhoto('${safeName}')` : `uploadSpotPhoto('${safeName}')`}">${hasPhoto ? '🗑 Supprimer photo' : '📷 Ma photo'}</button>`;
+    if (note) html += `<div class="popup-journal-note">« ${note} »</div>`;
+    html += '</div>';
+    return html;
+  }
+
+  function buildPopup(spot, dayNum) {
+    const metaLine = spot.meta ? `<div class="popup-meta">${spot.meta}</div>` : '';
+    const gmapsUrl = buildMapsUrl(spot);
+    const photoUrl = getPhotoUrl(spot);
+    const photoHtml = photoUrl ? `<div class="popup-photo"><img loading="lazy" src="${photoUrl}" alt="${spot.name}" onerror="this.parentElement.style.display='none'"></div>` : '';
+    const infoHtml = buildInfoSection(spot);
+    const journalHtml = buildJournalSection(spot);
+    return `
+      ${photoHtml}
+      <div class="popup-overline">${spot.time} · Jour ${dayNum}</div>
+      <div class="popup-title">${spot.name}</div>
+      <div class="popup-desc">${spot.description}</div>
+      ${metaLine}
+      ${infoHtml}
+      ${journalHtml}
+      <a class="popup-link" target="_blank" href="${gmapsUrl}">Ouvrir dans Google Maps →</a>
+    `;
+  }
+
+  // ======== GPS DU JOUR ========
+  function buildDayRouteUrl(day) {
+    const spots = day.spots.filter(s => {
+      const name = s.name.toLowerCase();
+      if (name.startsWith('route ') || name.startsWith('retour ') || name.startsWith('réveil') || name.startsWith('départ ')) return false;
+      if (s.category === 'transport' && !name.includes('aéroport') && !name.includes('rendu voiture') && !name.includes('parking')) return false;
+      return true;
+    });
+    if (spots.length < 2) return null;
+
+    const max = 10;
+    let subset = spots;
+    if (spots.length > max) {
+      const middle = spots.slice(1, -1);
+      const step = middle.length / (max - 2);
+      const sampled = [];
+      for (let i = 0; i < max - 2; i++) sampled.push(middle[Math.floor(i * step)]);
+      subset = [spots[0], ...sampled, spots[spots.length - 1]];
+    }
+
+    const origin = subset[0].coords.join(',');
+    const destination = subset[subset.length - 1].coords.join(',');
+    const waypoints = subset.slice(1, -1).map(s => s.coords.join(',')).join('|');
+    return `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}` +
+           (waypoints ? `&waypoints=${encodeURIComponent(waypoints)}` : '') +
+           '&travelmode=driving';
+  }
+
+  // ======== WEATHER ========
+  function weatherEmoji(code) {
+    if (code === 0) return '☀️';
+    if (code <= 3) return '⛅';
+    if (code <= 48) return '🌫️';
+    if (code <= 57) return '🌦️';
+    if (code <= 67) return '🌧️';
+    if (code <= 77) return '❄️';
+    if (code <= 82) return '🌦️';
+    if (code <= 86) return '🌨️';
+    if (code <= 99) return '⛈️';
+    return '🌤️';
+  }
+
+  function weatherLabel(code) {
+    if (code === 0) return 'Ensoleillé';
+    if (code <= 3) return 'Partiellement nuageux';
+    if (code <= 48) return 'Brume';
+    if (code <= 57) return 'Bruine';
+    if (code <= 67) return 'Pluie';
+    if (code <= 77) return 'Neige';
+    if (code <= 82) return 'Averses';
+    if (code <= 86) return 'Neige';
+    if (code <= 99) return 'Orages';
+    return 'Variable';
+  }
+
+  async function fetchWeather() {
+    const url = 'https://api.open-meteo.com/v1/forecast?latitude=37.10&longitude=-8.46&daily=temperature_2m_max,temperature_2m_min,weathercode,precipitation_probability_max&timezone=Europe%2FLisbon&forecast_days=16';
+    try {
+      const resp = await fetch(url);
+      const data = await resp.json();
+      const dates = data.daily.time;
+      const tripStart = new Date('2026-06-23');
+      let found = false;
+      for (let i = 0; i < 5; i++) {
+        const d = new Date(tripStart);
+        d.setDate(tripStart.getDate() + i);
+        const iso = d.toISOString().split('T')[0];
+        const idx = dates.indexOf(iso);
+        if (idx >= 0) {
+          days[i].weather = {
+            max: Math.round(data.daily.temperature_2m_max[idx]),
+            min: Math.round(data.daily.temperature_2m_min[idx]),
+            code: data.daily.weathercode[idx],
+            precip: data.daily.precipitation_probability_max[idx]
+          };
+          found = true;
+        }
+      }
+      if (found) {
+        renderTabs();
+        renderDayHeader();
+      }
+    } catch (e) { console.warn('Weather fetch failed:', e); }
+  }
+
+  function renderTabs() {
+    const el = document.getElementById('day-tabs');
+    el.innerHTML = days.map((d, i) => {
+      const w = d.weather ? `<span class="day-tab-weather">${weatherEmoji(d.weather.code)} ${d.weather.max}°</span>` : '';
+      return `<button class="day-tab ${i === currentDay ? 'active' : ''}" onclick="selectDay(${i})">
+        <span class="day-tab-num">J${d.number}</span>
+        <span class="day-tab-date">${d.shortDate}</span>
+        ${w}
+      </button>`;
+    }).join('');
+  }
+
+  function renderDayHeader() {
+    const d = days[currentDay];
+    const catCount = {};
+    d.spots.forEach(s => { catCount[s.category] = (catCount[s.category] || 0) + 1; });
+
+    const restos = (catCount.resto || 0) + (catCount.bar || 0);
+    const spots = d.spots.length;
+    const b = dayBudget(d);
+    const budgetLine = b.typical > 0
+      ? `<div class="day-budget">💰 ${formatEuro(b.low)} à ${formatEuro(b.high)} / pers · ~${formatEuro(b.typical)}</div>`
+      : '';
+
+    let weatherLine = '';
+    if (d.weather) {
+      weatherLine = `
+        <div class="day-weather">
+          <span class="day-weather-icon">${weatherEmoji(d.weather.code)}</span>
+          <div class="day-weather-text">
+            <span class="day-weather-temp">${d.weather.min}° / ${d.weather.max}°</span>
+            <span class="day-weather-detail">${weatherLabel(d.weather.code)} · ${d.weather.precip ?? 0}% pluie</span>
+          </div>
+        </div>`;
+    } else {
+      weatherLine = `<div class="day-weather-pending">⏳ Météo dispo ~14 jours avant le voyage</div>`;
+    }
+
+    const gpsUrl = buildDayRouteUrl(d);
+    const gpsBtn = gpsUrl
+      ? `<a class="gps-day-btn" href="${gpsUrl}" target="_blank">🗺️ GPS du jour · Itinéraire complet</a>`
+      : '';
+
+    const jstats = getDayJournalStats(d);
+    const journalLine = jstats.visited > 0
+      ? `<div class="journal-progress">📖 <span><strong>${jstats.visited}/${jstats.total}</strong> spots visités</span><div class="journal-progress-bar"><div class="journal-progress-fill" style="width:${jstats.pct}%"></div></div></div>`
+      : '';
+
+    const planB = d.planB;
+    const planBHtml = planB ? `
+      <button class="planB-toggle" onclick="togglePlanB()">
+        <span>⛈️ Plan B si météo pourrie</span>
+        <span class="planB-toggle-icon">▼</span>
+      </button>
+      <div class="planB-content" id="planB-content">
+        <div class="planB-intro">${planB.intro}</div>
+        ${planB.alternatives.map(a => `<div class="planB-alt"><strong>${a.name}</strong> · ${a.desc}</div>`).join('')}
+      </div>
+    ` : '';
+
+    const tripDayIdx = getCurrentTripDayIdx();
+    const isToday = tripDayIdx === currentDay;
+    const todayHtml = isToday ? `<div class="today-indicator">AUJOURD'HUI · Tu es en Algarve 🇵🇹</div>` : '';
+
+    document.getElementById('day-header').innerHTML = `
+      ${todayHtml}
+      <div class="day-header-overline">Jour ${d.number} sur ${days.length}</div>
+      <div class="day-header-title">${d.title}</div>
+      <div class="day-header-date">${d.fullDate}</div>
+      <div class="day-stats">
+        <div class="day-stat"><strong>${spots}</strong> étapes</div>
+        <div class="day-stat"><strong>${restos}</strong> tables</div>
+        ${catCount.insta ? `<div class="day-stat"><strong>${catCount.insta}</strong> spots insta</div>` : ''}
+      </div>
+      ${budgetLine}
+      ${weatherLine}
+      ${journalLine}
+      ${gpsBtn}
+      ${planBHtml}
+    `;
+  }
+
+  window.togglePlanB = function() {
+    const btn = document.querySelector('.planB-toggle');
+    const content = document.getElementById('planB-content');
+    if (btn && content) {
+      btn.classList.toggle('open');
+      content.classList.toggle('open');
+    }
+  };
+
+  function updateWeekBudget() {
+    const wb = weekBudget();
+    const el = document.getElementById('week-budget-value');
+    if (el && wb.typical > 0) {
+      el.textContent = `~${formatEuro(wb.typical)}`;
+      el.title = `Fourchette : ${formatEuro(wb.low)} (sobre) à ${formatEuro(wb.high)} (large), hors hôtel, vol et location voiture`;
+    }
+  }
+
+  function renderSpots() {
+    const d = days[currentDay];
+    const list = document.getElementById('spots-list');
+    const reservations = getReservations();
+    const journal = getJournal();
+    const tripDayIdx = getCurrentTripDayIdx();
+    const isToday = tripDayIdx === currentDay;
+    const currentSpotIdx = isToday ? getCurrentSpotIdx(d) : -1;
+    list.innerHTML = d.spots.map((s, i) => {
+      const meta = categoryMeta[s.category];
+      const info = SPOT_METADATA[s.name];
+      const booked = reservations[s.name];
+      const entry = journal[s.name];
+      const isVisited = entry?.visited;
+      const isCurrent = i === currentSpotIdx;
+      const badges = [];
+      if (isCurrent) badges.push('<span class="spot-now-badge">MAINTENANT</span>');
+      if (isVisited) badges.push('<span class="spot-badge visited">✓ Vu</span>');
+      if (booked) badges.push('<span class="spot-badge booked">✓ Réservé</span>');
+      else if (info?.booking === 'required' && !isVisited) badges.push('<span class="spot-badge required">À réserver</span>');
+      const badgesHtml = badges.length ? `<span class="spot-badges">${badges.join('')}</span>` : '';
+      return `
+        <div class="spot ${isVisited ? 'visited' : ''} ${isCurrent ? 'current-now' : ''}" onclick="focusSpot(${i})" data-idx="${i}">
+          <div class="spot-icon" style="background:${meta.color}">${meta.icon}</div>
+          <div class="spot-content">
+            <div class="spot-time">${s.time}</div>
+            <div class="spot-name">${s.name}${badgesHtml}</div>
+            <div class="spot-desc">${s.description}</div>
+            ${s.meta ? `<div class="spot-meta">${s.meta}</div>` : ''}
+            ${entry?.note ? `<div class="spot-meta" style="color:#2EC4B6;font-style:italic;margin-top:6px">« ${entry.note} »</div>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+    if (currentSpotIdx >= 0) {
+      const el = list.querySelector(`.spot[data-idx="${currentSpotIdx}"]`);
+      if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+    } else {
+      list.scrollTop = 0;
+    }
+  }
+
+  function renderMapMarkers() {
+    markers.forEach(m => map.removeLayer(m));
+    markers = [];
+    if (routeLine) { map.removeLayer(routeLine); routeLine = null; }
+
+    if (viewAll) {
+      const allCoords = [];
+      days.forEach((d, di) => {
+        d.spots.forEach((s, i) => {
+          const marker = L.marker(s.coords, { icon: createMarker(s, i, false) }).addTo(map);
+          marker.bindPopup(buildPopup(s, d.number), { maxWidth: 300 });
+          markers.push(marker);
+          allCoords.push(s.coords);
+        });
+      });
+      if (allCoords.length) {
+        map.fitBounds(L.latLngBounds(allCoords).pad(0.15));
+      }
+    } else {
+      const d = days[currentDay];
+      const coords = [];
+      d.spots.forEach((s, i) => {
+        const marker = L.marker(s.coords, { icon: createMarker(s, i, true) }).addTo(map);
+        marker.bindPopup(buildPopup(s, d.number), { maxWidth: 300 });
+        marker.on('click', () => highlightSpot(i));
+        markers.push(marker);
+        coords.push(s.coords);
+      });
+
+      if (showRoute && coords.length > 1) {
+        routeLine = L.polyline(coords, {
+          color: '#C8A04A',
+          weight: 2.5,
+          opacity: 0.6,
+          dashArray: '8, 10'
+        }).addTo(map);
+      }
+
+      if (coords.length) {
+        map.fitBounds(L.latLngBounds(coords).pad(0.25));
+      }
+    }
+  }
+
+  function selectDay(i) {
+    currentDay = i;
+    viewAll = false;
+    document.getElementById('btn-view-all').classList.remove('active');
+    renderTabs();
+    renderDayHeader();
+    renderSpots();
+    renderMapMarkers();
+  }
+
+  function focusSpot(i) {
+    const s = days[currentDay].spots[i];
+    map.flyTo(s.coords, 14, { duration: 1 });
+    setTimeout(() => markers[i] && markers[i].openPopup(), 900);
+    highlightSpot(i);
+  }
+
+  function highlightSpot(i) {
+    document.querySelectorAll('.spot').forEach(el => el.classList.remove('active'));
+    const el = document.querySelector(`.spot[data-idx="${i}"]`);
+    if (el) {
+      el.classList.add('active');
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+
+  function toggleViewAll() {
+    viewAll = !viewAll;
+    document.getElementById('btn-view-all').classList.toggle('active', viewAll);
+    renderMapMarkers();
+  }
+
+  function toggleRoute() {
+    showRoute = !showRoute;
+    document.getElementById('btn-route').classList.toggle('active', showRoute);
+    renderMapMarkers();
+  }
+
+  function toggleSidebar() {
+    const sb = document.getElementById('sidebar');
+    const btn = document.getElementById('mobile-toggle');
+    sb.classList.toggle('hidden');
+    btn.textContent = sb.classList.contains('hidden') ? 'Voir le programme' : 'Voir la carte';
+  }
+
+  function updateCountdown() {
+    const target = new Date('2026-06-23T21:30:00');
+    const now = new Date();
+    const diff = Math.ceil((target - now) / (1000 * 60 * 60 * 24));
+    const num = document.getElementById('countdown-num');
+    const label = document.getElementById('countdown-label');
+
+    if (diff > 0) {
+      num.textContent = diff;
+      label.textContent = diff === 1 ? 'jour restant' : 'jours restants';
+    } else if (diff >= -4) {
+      num.textContent = `J${Math.abs(diff) + 1}`;
+      label.textContent = 'en Algarve';
+    } else {
+      num.textContent = '✓';
+      label.textContent = 'terminé';
+    }
+  }
+
+  // ========= INIT =========
+  // Mode Aujourd'hui : si on est pendant le voyage, auto-select le jour courant
+  const todayIdx = getCurrentTripDayIdx();
+  if (todayIdx >= 0) currentDay = todayIdx;
+
+  updateCountdown();
+  updateWeekBudget();
+  renderTabs();
+  renderDayHeader();
+  renderSpots();
+  document.getElementById('btn-route').classList.add('active');
+  renderMapMarkers();
+
+  fetchWeather();
+
+  // Refresh countdown every hour + weather every 6h + "MAINTENANT" every 10 min
+  setInterval(updateCountdown, 1000 * 60 * 60);
+  setInterval(fetchWeather, 1000 * 60 * 60 * 6);
+  setInterval(() => {
+    if (getCurrentTripDayIdx() === currentDay) {
+      renderSpots();
+      renderDayHeader();
+    }
+  }, 1000 * 60 * 10);
+
+  // Service worker for offline support
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(err => console.warn('SW failed:', err));
+    });
+  }
+</script>
+</body>
+</html>
