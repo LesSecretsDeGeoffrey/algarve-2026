@@ -1,4 +1,4 @@
-const CACHE_NAME = 'algarve-2026-v4';
+const CACHE_NAME = 'algarve-2026-v5';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -11,9 +11,9 @@ const STATIC_ASSETS = [
 
 const RUNTIME_PATTERNS = [
   /basemaps\.cartocdn\.com/,
-  /loremflickr\.com/,
-  /fonts\.gstatic\.com/,
-  /unsplash\.com/
+  /commons\.wikimedia\.org/,
+  /upload\.wikimedia\.org/,
+  /fonts\.gstatic\.com/
 ];
 
 self.addEventListener('install', (event) => {
