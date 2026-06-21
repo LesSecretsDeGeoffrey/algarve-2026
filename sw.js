@@ -1,4 +1,4 @@
-const CACHE_NAME = 'algarve-2026-v5';
+const CACHE_NAME = 'algarve-2026-v6';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -37,10 +37,31 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
+
+  // La PAGE (index.html / navigation) = NETWORK-FIRST :
+  // on récupère toujours la dernière version en ligne, et on retombe sur le cache hors-ligne.
+  const isHTML = request.mode === 'navigate'
+    || url.pathname.endsWith('/index.html')
+    || (url.origin === self.location.origin && (url.pathname === '/' || url.pathname.endsWith('/')));
+
+  if (isHTML) {
+    event.respondWith(
+      fetch(request).then(resp => {
+        const clone = resp.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put('./index.html', clone));
+        return resp;
+      }).catch(() =>
+        caches.match(request).then(c => c || caches.match('./index.html') || caches.match('./'))
+      )
+    );
+    return;
+  }
+
   const isStatic = STATIC_ASSETS.some(asset => request.url.includes(asset.replace('./', '')));
   const isRuntime = RUNTIME_PATTERNS.some(pattern => pattern.test(request.url));
 
   if (isStatic) {
+    // assets stables (icône, manifeste, Leaflet, fonts) = cache-first
     event.respondWith(
       caches.match(request).then(cached =>
         cached || fetch(request).then(resp => {
@@ -51,6 +72,7 @@ self.addEventListener('fetch', (event) => {
       )
     );
   } else if (isRuntime) {
+    // tuiles carte + photos = stale-while-revalidate
     event.respondWith(
       caches.match(request).then(cached => {
         const fetchPromise = fetch(request).then(resp => {
