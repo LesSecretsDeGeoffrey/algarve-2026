@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0A0814">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>Algarve · L'expérience</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --ink:#0A0814; --cream:#FBF5EC;
+    --coral:#FF6B5C; --amber:#FF9A3D; --gold:#E0A43B; --teal:#1FB6B6;
+    --sun:linear-gradient(135deg,#FF6B5C,#FF9A3D 55%,#E0A43B);
+    --serif:'Playfair Display',Georgia,serif;
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    --ease:cubic-bezier(.22,1,.36,1);
+  }
+  html,body{height:100%}
+  body{font-family:var(--sans);background:var(--ink);color:#fff;-webkit-font-smoothing:antialiased;overflow:hidden}
+
+  /* progress bar */
+  .progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:60;background:var(--sun);box-shadow:0 0 14px rgba(255,138,61,.7);transition:width .15s linear}
+
+  /* dots nav */
+  .dots{position:fixed;right:16px;top:50%;transform:translateY(-50%);z-index:60;display:flex;flex-direction:column;gap:13px}
+  .dot{width:9px;height:9px;border-radius:50%;border:none;background:rgba(255,255,255,.32);cursor:pointer;padding:0;transition:all .35s var(--ease)}
+  .dot.active{background:var(--coral);transform:scale(1.5);box-shadow:0 0 0 4px rgba(255,107,92,.22)}
+  @media(max-width:520px){.dots{right:10px;gap:11px}}
+
+  /* scroller + panels */
+  .scroller{height:100svh;overflow-y:scroll;scroll-snap-type:y mandatory;scroll-behavior:smooth;scrollbar-width:none}
+  .scroller::-webkit-scrollbar{display:none}
+  .panel{position:relative;min-height:100svh;scroll-snap-align:start;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end}
+
+  /* ===== HERO ===== */
+  .hero{justify-content:center;align-items:center;text-align:center;padding:30px;background:radial-gradient(125% 125% at 50% 6%,#3a2150,#241634 46%,#120a1e 100%)}
+  .orb{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none}
+  .o1{width:48vmax;height:48vmax;background:#FF6B5C;opacity:.5;top:-12%;left:-10%;animation:o1 17s ease-in-out infinite alternate}
+  .o2{width:42vmax;height:42vmax;background:#FF9A3D;opacity:.5;bottom:-14%;right:-12%;animation:o2 21s ease-in-out infinite alternate}
+  .o3{width:36vmax;height:36vmax;background:#1FB6B6;opacity:.38;bottom:-6%;left:18%;animation:o3 24s ease-in-out infinite alternate}
+  @keyframes o1{to{transform:translate(16%,12%) scale(1.15)}}
+  @keyframes o2{to{transform:translate(-14%,-12%) scale(1.2)}}
+  @keyframes o3{to{transform:translate(10%,-16%) scale(1.1)}}
+  .hero-inner{position:relative;z-index:2;max-width:760px}
+  .hero-eyebrow{font-family:'Courier New',monospace;font-size:12px;letter-spacing:6px;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:18px}
+  .hero-title{font-family:var(--serif);font-weight:900;font-size:clamp(72px,19vw,180px);line-height:.86;letter-spacing:-3px;
+    background:linear-gradient(100deg,#FFE0AE,#FF8A5C 42%,#FF6F94 72%,#FFC178);-webkit-background-clip:text;background-clip:text;color:transparent;background-size:220% auto;animation:shine 7s linear infinite}
+  @keyframes shine{to{background-position:220% center}}
+  .hero-sub{margin-top:22px;font-size:17px;color:rgba(255,255,255,.85);letter-spacing:.3px}
+  .hero-meta{margin-top:8px;font-size:13px;color:rgba(255,255,255,.55);letter-spacing:2px;text-transform:uppercase}
+  .scrollhint{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);z-index:2;display:flex;flex-direction:column;align-items:center;gap:8px;color:rgba(255,255,255,.6);font-size:10px;letter-spacing:2.5px;text-transform:uppercase}
+  .scrollhint .chev{width:20px;height:20px;border-right:2px solid rgba(255,255,255,.6);border-bottom:2px solid rgba(255,255,255,.6);transform:rotate(45deg);animation:bob 1.8s var(--ease) infinite}
+  @keyframes bob{0%,100%{transform:rotate(45deg) translate(0,0);opacity:.4}50%{transform:rotate(45deg) translate(4px,4px);opacity:1}}
+  .hero-inner>*{animation:up 1s var(--ease) both}
+  .hero-inner>*:nth-child(2){animation-delay:.12s}
+  .hero-inner>*:nth-child(3){animation-delay:.24s}
+  .hero-inner>*:nth-child(4){animation-delay:.36s}
+  @keyframes up{from{opacity:0;transform:translateY(26px);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
+
+  /* ===== DAY PANEL ===== */
+  .day-cover{position:absolute;inset:0;z-index:0;background-size:cover;background-position:center;will-change:transform;animation:ken 26s ease-in-out infinite alternate}
+  @keyframes ken{from{transform:scale(1.08)}to{transform:scale(1.24) translate(-2%,-3%)}}
+  .day::after{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(8,6,16,.42) 0%,rgba(8,6,16,.12) 32%,rgba(8,6,16,.55) 66%,rgba(8,6,16,.92) 100%)}
+  .day-num{position:absolute;z-index:1;top:5%;right:3%;font-family:var(--serif);font-weight:900;font-size:min(46vw,440px);line-height:.74;color:rgba(255,255,255,.10);letter-spacing:-6px;pointer-events:none}
+  .day-content{position:relative;z-index:2;padding:0 26px 40px;width:100%}
+  .day-overline{font-family:'Courier New',monospace;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--amber);margin-bottom:12px;display:flex;align-items:center;gap:10px}
+  .day-overline::before{content:'';width:26px;height:2px;background:var(--sun);border-radius:2px}
+  .day-title{font-family:var(--serif);font-weight:900;font-size:clamp(38px,9vw,72px);line-height:.98;letter-spacing:-1.5px;text-shadow:0 4px 30px rgba(0,0,0,.5);max-width:14ch}
+  .day-sub{margin-top:14px;font-size:15px;color:rgba(255,255,255,.82);max-width:30ch;line-height:1.5}
+
+  /* film-strip */
+  .strip{display:flex;gap:14px;margin-top:24px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;padding-bottom:6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .strip::-webkit-scrollbar{display:none}
+  .hl{flex:0 0 auto;width:230px;scroll-snap-align:start;border-radius:18px;overflow:hidden;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 18px 40px -20px rgba(0,0,0,.7);transition:transform .35s var(--ease)}
+  .hl:hover{transform:translateY(-5px)}
+  .hl-img{height:128px;background-size:cover;background-position:center;background-image:var(--i);position:relative}
+  .hl-noimg{height:128px;display:flex;align-items:center;justify-content:center;font-size:46px;background:linear-gradient(150deg,rgba(255,107,92,.34),rgba(31,182,182,.28))}
+  .hl-body{padding:13px 15px 16px}
+  .hl-time{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1.5px;color:var(--amber);font-weight:700}
+  .hl-name{font-family:var(--serif);font-size:18px;font-weight:700;margin-top:4px;line-height:1.1}
+  .hl-note{font-size:12px;color:rgba(255,255,255,.7);margin-top:6px;line-height:1.4}
+  .hl-cat{position:absolute;top:10px;left:10px;width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:17px;background:rgba(10,8,20,.5);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2)}
+
+  /* ===== OUTRO ===== */
+  .outro{justify-content:center;align-items:center;text-align:center;padding:30px;background:radial-gradient(125% 125% at 50% 110%,#3a2150,#1c1230 50%,#120a1e 100%)}
+  .outro .orb{opacity:.4}
+  .outro-inner{position:relative;z-index:2;max-width:620px}
+  .outro-title{font-family:var(--serif);font-weight:900;font-size:clamp(46px,12vw,104px);line-height:.92;letter-spacing:-2px}
+  .outro-sub{margin-top:18px;color:rgba(255,255,255,.82);font-size:16px;line-height:1.6}
+  .cta{margin-top:32px;display:inline-flex;align-items:center;gap:10px;padding:17px 34px;border-radius:44px;text-decoration:none;color:#fff;font-weight:700;font-size:14px;letter-spacing:.5px;text-transform:uppercase;background:var(--sun);box-shadow:0 18px 46px -14px rgba(255,107,92,.7),inset 0 1px 0 rgba(255,255,255,.3);transition:transform .3s var(--ease),box-shadow .3s var(--ease)}
+  .cta:hover{transform:translateY(-3px);box-shadow:0 26px 56px -14px rgba(255,107,92,.85)}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(34px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+  .reveal.in{opacity:1;transform:none}
+  .strip .hl{opacity:0;transform:translateY(30px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+  .panel.active .strip .hl{opacity:1;transform:none}
+  .panel.active .strip .hl:nth-child(2){transition-delay:.08s}
+  .panel.active .strip .hl:nth-child(3){transition-delay:.16s}
+  .panel.active .strip .hl:nth-child(4){transition-delay:.24s}
+  .panel.active .strip .hl:nth-child(5){transition-delay:.32s}
+
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important}
+    .reveal,.strip .hl{opacity:1!important;transform:none!important;transition:none!important}
+    .scroller{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<nav class="dots" id="dots"></nav>
+<div class="scroller" id="scroller">
+
+  <section class="panel hero">
+    <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+    <div class="hero-inner">
+      <div class="hero-eyebrow">Carnet de voyage</div>
+      <h1 class="hero-title">Algarve</h1>
+      <div class="hero-sub">Cinq jours sur la côte d'or du Portugal</div>
+      <div class="hero-meta">23 → 27 juin 2026</div>
+    </div>
+    <div class="scrollhint"><span>Fais défiler</span><span class="chev"></span></div>
+  </section>
+
+  <!-- les jours sont injectés ici -->
+
+  <section class="panel outro">
+    <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+    <div class="outro-inner">
+      <div class="hero-eyebrow reveal">Adeus, Algarve</div>
+      <h2 class="outro-title reveal">À très vite</h2>
+      <p class="outro-sub reveal">Ça, c'était le rêve. Pour les vraies infos — horaires, 3 options par resto, GPS du jour, météo — ouvre le carnet de route.</p>
+      <a class="cta reveal" href="./index.html">Ouvrir le carnet de route →</a>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  const wiki = (f, w) => 'https://commons.wikimedia.org/wiki/Special:FilePath/' + encodeURIComponent(f) + '?width=' + w;
+  const P = {
+    algar:'Algar_Seco_rocks,_Carvoeiro,_Portugal_julesvernex2.jpg',
+    marinha:'Praia_da_Marinha_(2012-09-27),_by_Klugschnacker_in_Wikipedia_(86).JPG',
+    albandeira:'Portugal_-_Albandeira_-_beach_(25861563526).jpg',
+    benagil:'Praia_de_Benagil_-_Portugal_🇵🇹_(53651979938).jpg',
+    amado:'Praia_do_Amado.jpg',
+    lagos:'Vista_Centro_Histórico_de_Lagos_(cropped).jpg',
+    camilo:'Praia_do_Camilo_-_Lagos_(48431314177).jpg',
+    piedade:'Ponta_da_Piedade_aerial_view.jpg',
+    falesia:'Falesia_Beach_seen_from_sea.JPG',
+    ferragudo:'2007.03.28.pt.lagoa.Ferragudo.jpg'
+  };
+  const DAYS = [
+    { n:1, over:'Jour 1 · Mardi 23 juin', title:'Arrivée au crépuscule', sub:'Atterrissage à Faro, dîner dans la vieille ville, puis route vers Carvoeiro sous les étoiles.', cover:P.algar,
+      hl:[
+        {t:'22h30',name:'À do Pinto',cat:'🍷',note:'Poisson grillé dans une ruelle de Faro'},
+        {t:'00h00',name:'Route côtière',cat:'🚗',note:'55 min vers Carvoeiro, ciel étoilé'},
+        {t:'00h55',name:'Wyndham Carvoeiro',cat:'🏨',note:'Première nuit face à l\'océan',img:P.algar}
+      ]},
+    { n:2, over:'Jour 2 · Mercredi 24 juin', title:'Les criques d\'or', sub:'La plus belle journée de falaises ocre, d\'arches et d\'eau turquoise de tout l\'Algarve.', cover:P.marinha,
+      hl:[
+        {t:'10h30',name:'Algar Seco',cat:'📸',note:'Passerelle sur la falaise sculptée',img:P.algar},
+        {t:'12h30',name:'Praia da Marinha',cat:'🏖️',note:'Top 10 des plages d\'Europe',img:P.marinha},
+        {t:'15h30',name:'Arco de Albandeira',cat:'🏖️',note:'L\'arche iconique de la côte',img:P.albandeira},
+        {t:'17h00',name:'Grotte de Benagil',cat:'📸',note:'La cathédrale de pierre à l\'oculus',img:P.benagil},
+        {t:'20h15',name:'Sky Bar · coucher de soleil',cat:'🌅',note:'Cocktail clifftop au Tivoli'}
+      ]},
+    { n:3, over:'Jour 3 · Jeudi 25 juin', title:'Côte sauvage & Lagos', sub:'Le bout du monde vincentin le matin, les criques mythiques de Lagos au soleil couchant.', cover:P.piedade,
+      hl:[
+        {t:'10h00',name:'Praia do Amado',cat:'📸',note:'Falaises atlantiques, vent salé',img:P.amado},
+        {t:'14h00',name:'Vieille ville de Lagos',cat:'🏛️',note:'Ruelles, azulejos, gelato',img:P.lagos},
+        {t:'16h30',name:'Praia do Camilo',cat:'🏖️',note:'200 marches vers une crique parfaite',img:P.camilo},
+        {t:'18h30',name:'Ponta da Piedade',cat:'🌅',note:'Le sunset le plus spectaculaire',img:P.piedade}
+      ]},
+    { n:4, over:'Jour 4 · Vendredi 26 juin', title:'Sable rouge & farniente', sub:'Les falaises rouges de Falésia, l\'après-midi piscine, puis Ferragudo au coucher du soleil.', cover:P.falesia,
+      hl:[
+        {t:'11h45',name:'Praia da Falésia',cat:'🏖️',note:'6 km de falaises rouge-ocre',img:P.falesia},
+        {t:'18h30',name:'Ferragudo',cat:'🏛️',note:'Village de pêcheurs aux portes turquoise',img:P.ferragudo},
+        {t:'20h00',name:'Praia dos Caneiros',cat:'🌅',note:'Le soleil tombe droit dans l\'Atlantique'}
+      ]},
+    { n:5, over:'Jour 5 · Samedi 27 juin', title:'Adeus Algarve', sub:'Départ aux aurores, le ciel qui rosit sur la route — déjà l\'envie de revenir.', cover:P.ferragudo,
+      hl:[
+        {t:'04h00',name:'Réveil & check-out',cat:'🌙',note:'Dernier regard sur l\'océan'},
+        {t:'07h20',name:'Décollage',cat:'✈️',note:'Tu reviendras forcément'}
+      ]}
+  ];
+
+  const scroller = document.getElementById('scroller');
+  const outro = scroller.querySelector('.outro');
+  DAYS.forEach(d => {
+    const sec = document.createElement('section');
+    sec.className = 'panel day';
+    sec.innerHTML = `
+      <div class="day-cover" style="background-image:url('${wiki(d.cover,1600)}')"></div>
+      <div class="day-num">${d.n}</div>
+      <div class="day-content">
+        <div class="day-overline reveal">${d.over}</div>
+        <h2 class="day-title reveal">${d.title}</h2>
+        <p class="day-sub reveal">${d.sub}</p>
+        <div class="strip">
+          ${d.hl.map(h => `
+            <article class="hl">
+              ${h.img ? `<div class="hl-img" style="--i:url('${wiki(h.img,600)}')"><span class="hl-cat">${h.cat}</span></div>`
+                      : `<div class="hl-noimg">${h.cat}</div>`}
+              <div class="hl-body">
+                <div class="hl-time">${h.t}</div>
+                <h3 class="hl-name">${h.name}</h3>
+                <p class="hl-note">${h.note}</p>
+              </div>
+            </article>`).join('')}
+        </div>
+      </div>`;
+    scroller.insertBefore(sec, outro);
+  });
+
+  // dots
+  const panels = [...scroller.querySelectorAll('.panel')];
+  const dotsWrap = document.getElementById('dots');
+  panels.forEach((p, i) => {
+    const b = document.createElement('button');
+    b.className = 'dot'; b.setAttribute('aria-label', 'Aller à la section ' + (i + 1));
+    b.onclick = () => p.scrollIntoView({ behavior: 'smooth' });
+    dotsWrap.appendChild(b);
+  });
+  const dots = [...dotsWrap.children];
+
+  // active panel + reveals
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const i = panels.indexOf(e.target);
+        dots.forEach((d, j) => d.classList.toggle('active', j === i));
+        e.target.classList.add('active');
+        e.target.querySelectorAll('.reveal').forEach(r => r.classList.add('in'));
+      } else {
+        e.target.classList.remove('active');
+      }
+    });
+  }, { threshold: 0.55 });
+  panels.forEach(p => io.observe(p));
+
+  // progress bar
+  const bar = document.getElementById('progress');
+  scroller.addEventListener('scroll', () => {
+    const max = scroller.scrollHeight - scroller.clientHeight;
+    bar.style.width = (max > 0 ? (scroller.scrollTop / max) * 100 : 0) + '%';
+  }, { passive: true });
+</script>
+</body>
+</html>

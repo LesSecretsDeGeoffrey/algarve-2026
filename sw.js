@@ -1,4 +1,4 @@
-const CACHE_NAME = 'algarve-2026-v9';
+const CACHE_NAME = 'algarve-2026-v10';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -48,7 +48,7 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       fetch(request).then(resp => {
         const clone = resp.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put('./index.html', clone));
+        caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
         return resp;
       }).catch(() =>
         caches.match(request).then(c => c || caches.match('./index.html') || caches.match('./'))
