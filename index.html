@@ -1659,6 +1659,241 @@
       transition-duration: 0.01ms !important;
     }
   }
+  /* ============================================================
+     SUNSET ALGARVE — refonte claire & vibrante (coucher de soleil)
+     fond sable · corail/ambre/or · turquoise océan · bento · hero
+     (dernier calque : gagne la cascade)
+     ============================================================ */
+  :root {
+    --bg: #FBF5EC;
+    --bg-2: #FFFCF7;
+    --bg-3: #FFFFFF;
+    --cream: #2A2018;
+    --text: #574C42;
+    --text-dim: #8A7E70;
+    --text-faint: #A99D8C;
+    --gold: #A8641C;
+    --gold-bright: #E0A43B;
+    --border: rgba(192,122,30,0.18);
+    --border-strong: rgba(192,122,30,0.40);
+    --coral: #FF6B5C;
+    --amber: #FF9A3D;
+    --teal: #1FB6B6;
+    --hair: rgba(192,122,30,0.16);
+    --hair-str: rgba(192,122,30,0.42);
+    --sun-grad: linear-gradient(135deg, #FF6B5C 0%, #FF9A3D 52%, #E0A43B 100%);
+    --glow-gold: 0 10px 30px -12px rgba(255,138,61,0.45);
+    --sh-card: 0 12px 30px -18px rgba(90,55,20,0.30);
+    --sh-pop: 0 26px 60px -26px rgba(70,45,20,0.42), 0 0 0 1px var(--hair);
+  }
+
+  body {
+    background:
+      radial-gradient(1100px 720px at 88% -12%, rgba(255,107,92,0.16), transparent 56%),
+      radial-gradient(1000px 720px at -10% 6%, rgba(255,154,61,0.14), transparent 54%),
+      radial-gradient(900px 760px at 50% 116%, rgba(31,182,182,0.12), transparent 60%),
+      #FBF5EC;
+    color: var(--text);
+  }
+  ::selection { background: rgba(255,107,92,0.28); color: #2A2018; }
+  :focus-visible { outline: 2px solid var(--coral); outline-offset: 2px; }
+
+  .header {
+    background: linear-gradient(180deg, rgba(255,251,244,0.92), rgba(255,251,244,0.66));
+    backdrop-filter: blur(22px) saturate(1.3);
+    -webkit-backdrop-filter: blur(22px) saturate(1.3);
+    border-bottom: 1px solid var(--hair);
+    box-shadow: 0 10px 30px -24px rgba(90,55,20,0.5);
+  }
+  .brand-title { color: #2A2018; }
+  .brand-sub, .countdown-label, .week-budget-label { color: var(--text-dim); }
+  .countdown-num { color: var(--coral); text-shadow: none; }
+  .week-budget-value { color: #2A2018; }
+  .week-budget { border-right-color: var(--hair); }
+  .header-action-btn {
+    background: linear-gradient(160deg, rgba(255,107,92,0.16), rgba(255,154,61,0.10));
+    color: var(--coral); border-color: var(--hair);
+  }
+  .header-action-btn:hover { box-shadow: var(--glow-gold); }
+
+  .sidebar {
+    background: linear-gradient(180deg, #FFFDF8, #FBF3E6);
+    border-right: 1px solid var(--hair);
+  }
+
+  .day-tabs {
+    background: linear-gradient(180deg, rgba(255,251,244,0.85), rgba(255,251,244,0.35));
+    border-bottom: 1px solid var(--hair);
+  }
+  .day-tab { color: var(--text-dim); }
+  .day-tab:hover { color: #2A2018; background: rgba(255,107,92,0.07); }
+  .day-tab.active { color: var(--coral); }
+  .day-tab.active::after { background: var(--sun-grad); box-shadow: 0 0 12px rgba(255,138,61,0.6); }
+  .day-tab-weather { color: var(--text-faint); }
+  .day-tab.active .day-tab-weather { color: var(--amber); }
+
+  /* ===== HERO DU JOUR ===== */
+  .day-hero {
+    display: flex; align-items: center; gap: 16px;
+    border-radius: 22px; padding: 22px; margin-bottom: 18px;
+    position: relative; overflow: hidden;
+    background: var(--sun-grad);
+    box-shadow: 0 18px 40px -20px rgba(255,107,92,0.55);
+    isolation: isolate;
+  }
+  .day-hero.has-cover::before {
+    content: ''; position: absolute; inset: 0; z-index: -2;
+    background-image: var(--cover); background-size: cover; background-position: center;
+    transform: scale(1.05);
+  }
+  .day-hero.has-cover::after {
+    content: ''; position: absolute; inset: 0; z-index: -1;
+    background: linear-gradient(135deg, rgba(255,90,76,0.86), rgba(255,154,61,0.74) 55%, rgba(224,164,59,0.70));
+    mix-blend-mode: multiply;
+  }
+  .day-hero-num {
+    font-family: var(--serif); font-weight: 900; font-size: 76px; line-height: 0.82;
+    color: #FFFFFF; letter-spacing: -3px; text-shadow: 0 6px 20px rgba(120,40,20,0.35); flex-shrink: 0;
+  }
+  .day-hero-info { min-width: 0; }
+  .day-hero .day-header-overline { color: rgba(255,255,255,0.92); margin-bottom: 6px; }
+  .day-hero .day-header-overline::before { background: rgba(255,255,255,0.8); }
+  .day-hero .day-header-title { color: #FFFFFF; font-size: 27px; line-height: 1.12; letter-spacing: -0.4px; text-shadow: 0 2px 12px rgba(120,40,20,0.3); }
+  .day-hero .day-header-date { color: rgba(255,255,255,0.9); margin-top: 6px; }
+  @media (max-width: 480px) {
+    .day-hero-num { font-size: 58px; }
+    .day-hero .day-header-title { font-size: 21px; }
+  }
+
+  .day-header-title, .day-header-date { color: var(--cream); }
+  .day-header-overline { color: var(--gold); }
+  .day-header-date { color: var(--text-dim); }
+
+  .day-budget { background: linear-gradient(135deg, rgba(255,154,61,0.16), rgba(224,164,59,0.10)); color: var(--gold); border-color: var(--hair); }
+  .day-weather { background: rgba(31,182,182,0.10); border-color: rgba(31,182,182,0.28); }
+  .day-weather-temp { color: #2A2018; }
+  .day-weather-detail { color: var(--text-dim); }
+  .day-weather-pending { background: rgba(0,0,0,0.03); color: var(--text-faint); border-color: var(--hair); }
+  .day-stat { color: var(--text-dim); }
+  .day-stat strong { color: var(--coral); }
+
+  /* ===== CARTES SPOT bento claires ===== */
+  .spot { background: #FFFFFF; border: 1px solid rgba(192,122,30,0.12); border-radius: 18px; box-shadow: var(--sh-card); }
+  .spot:hover { transform: translateY(-3px); border-color: rgba(255,107,92,0.32); box-shadow: 0 20px 40px -20px rgba(90,55,20,0.4), 0 0 0 1px rgba(255,107,92,0.14); }
+  .spot.active { border-color: var(--coral); background: linear-gradient(158deg, #FFF4EE, #FFFFFF); box-shadow: 0 20px 44px -20px rgba(255,107,92,0.45), 0 0 0 1px rgba(255,107,92,0.4); }
+  .spot.current-now { border-color: var(--coral) !important; background: linear-gradient(158deg, #FFF1EA, #FFFFFF) !important; box-shadow: 0 0 0 2px rgba(255,107,92,0.3) !important; }
+  .spot-time { color: var(--coral); }
+  .spot-name { color: #2A2018; }
+  .spot-desc { color: var(--text); }
+  .spot-meta { color: var(--text-dim); }
+  .spot.visited .spot-name { text-decoration-color: rgba(31,182,182,0.5); }
+  .spot-now-badge { background: var(--sun-grad); color: #fff; }
+
+  .spot-options { background: linear-gradient(180deg, rgba(255,154,61,0.07), rgba(255,154,61,0.02)); border-color: var(--hair); }
+  .spot-options-title { color: var(--gold); }
+  .opt-rank { background: rgba(255,107,92,0.14); color: var(--coral); }
+  .opt.rec { background: linear-gradient(135deg, rgba(255,107,92,0.12), rgba(255,154,61,0.05)); }
+  .opt-name { color: #2A2018; }
+  .opt-star { color: var(--coral); }
+  .opt-meta, .opt-flag { color: var(--text-dim); }
+  .opt-rating { color: var(--gold); }
+  .opt-link { background: rgba(31,182,182,0.12); color: #0E7D7D; }
+
+  .spot-badge.sunset { background: linear-gradient(135deg, rgba(255,107,92,0.16), rgba(255,154,61,0.12)); color: #C2410C; border: 1px solid rgba(255,107,92,0.3); }
+  .spot-badge.booked, .spot-badge.visited { background: rgba(31,182,182,0.14); color: #0E7D7D; border-color: rgba(31,182,182,0.4); }
+  .spot-badge.required { background: rgba(255,107,92,0.12); color: #C2410C; border-color: rgba(255,107,92,0.3); }
+
+  .gps-day-btn { background: linear-gradient(135deg, #2BC7C7, #0E8A8A); box-shadow: 0 14px 30px -14px rgba(31,182,182,0.55), inset 0 1px 0 rgba(255,255,255,0.3); }
+  .gps-day-btn:hover { box-shadow: 0 20px 40px -16px rgba(31,182,182,0.65); }
+
+  .journal-progress { background: rgba(31,182,182,0.08); border-color: rgba(31,182,182,0.25); color: #0E7D7D; }
+  .journal-progress-fill { background: var(--teal); }
+  .journal-progress-bar { background: rgba(31,182,182,0.18); }
+
+  .today-indicator { background: var(--sun-grad); border: none; color: #fff; }
+  .today-indicator::before { color: #fff; }
+
+  .planB-toggle { background: rgba(255,154,61,0.10); border-color: rgba(255,154,61,0.32); color: #C2410C; }
+  .planB-toggle:hover { background: rgba(255,154,61,0.18); }
+  .planB-content { background: rgba(255,154,61,0.05); border-color: rgba(255,154,61,0.22); }
+  .planB-alt { color: var(--text); border-top-color: rgba(255,154,61,0.2); }
+  .planB-alt strong { color: #C2410C; }
+  .planB-intro { color: var(--text-dim); }
+
+  .ov-intro { background: rgba(255,154,61,0.07); border-color: var(--hair); color: var(--text); }
+  .ov-intro strong { color: var(--gold); }
+  .ov-group-title { color: #2A2018; }
+  .ov-group-title .ov-count { color: var(--text-faint); }
+  .ov-item { background: #FFFFFF; border: 1px solid rgba(192,122,30,0.10); box-shadow: var(--sh-card); }
+  .ov-item:hover { box-shadow: 0 14px 28px -18px rgba(90,55,20,0.4); }
+  .ov-item-name { color: #2A2018; }
+  .ov-item-meta { color: var(--text-dim); }
+  .ov-item-day { background: rgba(255,107,92,0.12); color: var(--coral); }
+  .ov-item-tag { background: rgba(255,154,61,0.16); color: var(--gold); }
+
+  .ov-chip { background: #FFFFFF; border-color: var(--hair); color: var(--text-dim); }
+  .ov-chip:hover { color: #2A2018; border-color: var(--border-strong); }
+  .ov-chip.active { background: var(--sun-grad); border-color: transparent; color: #fff; box-shadow: var(--glow-gold); }
+  .ov-chip.active[style*="--chip"] { background: var(--chip); }
+  .ov-chip-n { background: rgba(0,0,0,0.06); }
+  .ov-chip.active .ov-chip-n { background: rgba(255,255,255,0.25); }
+
+  /* ===== CARTE claire ===== */
+  .leaflet-tile { filter: saturate(1.08) brightness(1.02) !important; }
+  #map { background: #DCEBF0; }
+  .map-btn, .map-legend, .leaflet-control-zoom a { background: rgba(255,251,244,0.82) !important; color: #574C42 !important; border: 1px solid var(--hair) !important; box-shadow: var(--sh-card); }
+  .map-btn:hover { color: var(--coral) !important; box-shadow: var(--glow-gold); }
+  .map-btn.active { background: var(--sun-grad) !important; color: #fff !important; border-color: transparent !important; }
+  .leaflet-control-zoom a:hover { background: rgba(255,107,92,0.12) !important; color: var(--coral) !important; }
+  .legend-item { color: var(--text-dim); }
+  .leaflet-control-attribution { background: rgba(255,251,244,0.85) !important; color: var(--text-faint) !important; }
+  .leaflet-control-attribution a { color: var(--gold) !important; }
+
+  .leaflet-popup-content-wrapper { background: rgba(255,252,247,0.96) !important; border: 1px solid var(--hair-str) !important; box-shadow: var(--sh-pop) !important; color: var(--text) !important; }
+  .leaflet-popup-tip { background: #FFFCF7 !important; border-color: var(--hair-str) !important; }
+  .leaflet-popup-close-button { color: var(--text-dim) !important; }
+  .popup-title { color: #2A2018; }
+  .popup-desc, .popup-info-row { color: var(--text); }
+  .popup-info-row strong { color: #2A2018; }
+  .popup-meta { color: var(--text-dim); border-bottom-color: var(--hair); }
+  .popup-overline, .popup-options-title { color: var(--gold); }
+  .popup-link { background: var(--sun-grad); color: #fff !important; box-shadow: 0 10px 22px -10px rgba(255,138,61,0.55); }
+  .popup-action-btn { background: rgba(255,154,61,0.12); color: #C2410C; border-color: var(--hair); }
+  .popup-action-btn:hover { background: var(--sun-grad); color: #fff; border-color: transparent; }
+  .popup-photo { background: #F0E6D6; }
+  .popup-opt { color: var(--text); }
+  .reservation-confirmed { background: rgba(31,182,182,0.08); border-color: rgba(31,182,182,0.3); color: var(--text); }
+  .reservation-confirmed .resv-label { color: #0E7D7D; }
+  .popup-journal-note { color: var(--text); background: rgba(255,154,61,0.08); border-left-color: var(--coral); }
+  .popup-booking.required { background: rgba(255,107,92,0.12); color: #C2410C; border-color: rgba(255,107,92,0.32); }
+  .popup-booking.recommended { background: rgba(255,154,61,0.14); color: var(--gold); border-color: rgba(255,154,61,0.34); }
+  .popup-booking.none { background: rgba(31,182,182,0.12); color: #0E7D7D; border-color: rgba(31,182,182,0.34); }
+
+  .custom-marker { border-color: #FFFFFF; }
+  .custom-marker-num { background: #FFFFFF; color: var(--coral); border-color: var(--coral); }
+
+  .mobile-toggle { background: var(--sun-grad); color: #fff; box-shadow: 0 16px 32px -12px rgba(255,107,92,0.5); }
+
+  .modal { background: #FFFCF7; border-color: var(--hair-str); }
+  .modal-backdrop { background: rgba(60,40,20,0.45); }
+  .modal-title { color: #2A2018; }
+  .modal-close { color: var(--text-dim); border-color: var(--hair); }
+  .modal-close:hover { background: rgba(255,107,92,0.1); color: var(--coral); }
+  .kit-section-title, .kit-section-title::before { color: var(--gold); }
+  .kit-section-title::before { background: var(--gold); }
+  .kit-emergency { background: #FBF3E6; }
+  .kit-emergency-label { color: var(--text); }
+  .kit-emergency-value { color: var(--coral); }
+  .kit-phrases-subtitle { color: #2A2018; }
+  .kit-phrase { border-bottom-color: var(--hair); }
+  .kit-phrase-fr { color: var(--text-dim); }
+  .kit-phrase-it { color: var(--gold); }
+  .kit-tip { color: var(--text); border-bottom-color: var(--hair); }
+  .qr-url { background: #FBF3E6; color: var(--text-dim); }
+  .qr-help { color: var(--text); }
+  .qr-help strong { color: var(--gold); }
+
+  .spots-list::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--amber), var(--gold)); }
 </style>
 </head>
 <body>
@@ -2617,11 +2852,20 @@ ${name}`);
     const isToday = tripDayIdx === currentDay;
     const todayHtml = isToday ? `<div class="today-indicator">AUJOURD'HUI · Tu es en Algarve 🇵🇹</div>` : '';
 
+    let cover = null;
+    for (const s of d.spots) { if (s.category !== 'transport') { const p = getPhotoUrl(s); if (p) { cover = p; break; } } }
+    if (!cover) { for (const s of d.spots) { const p = getPhotoUrl(s); if (p) { cover = p; break; } } }
+
     document.getElementById('day-header').innerHTML = `
       ${todayHtml}
-      <div class="day-header-overline">Jour ${d.number} sur ${days.length}</div>
-      <div class="day-header-title">${d.title}</div>
-      <div class="day-header-date">${d.fullDate}</div>
+      <div class="day-hero ${cover ? 'has-cover' : ''}" ${cover ? `style="--cover:url('${cover}')"` : ''}>
+        <div class="day-hero-num">${d.number}</div>
+        <div class="day-hero-info">
+          <div class="day-header-overline">Jour ${d.number} sur ${days.length}</div>
+          <div class="day-header-title">${d.title}</div>
+          <div class="day-header-date">${d.fullDate}</div>
+        </div>
+      </div>
       <div class="day-stats">
         <div class="day-stat"><strong>${spots}</strong> étapes</div>
         <div class="day-stat"><strong>${restos}</strong> tables</div>
