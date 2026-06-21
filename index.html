@@ -1220,6 +1220,196 @@
     .spots-list { padding: 12px; }
   }
 
+  /* ============================================================
+     LUX REDESIGN — Liquid Glass · profondeur · mouvement fluide
+     (calque visuel, ne touche pas au markup ni au JS)
+     ============================================================ */
+  :root {
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --glass-1: rgba(17, 24, 42, 0.62);
+    --hair: rgba(200, 160, 74, 0.14);
+    --hair-str: rgba(200, 160, 74, 0.40);
+    --gold-bright: #E6C26E;
+    --sh-card: 0 10px 28px -16px rgba(0,0,0,0.75);
+    --sh-pop: 0 24px 60px -24px rgba(0,0,0,0.85), 0 0 0 1px var(--hair);
+    --glow-gold: 0 0 24px -6px rgba(200,160,74,0.45);
+  }
+
+  body {
+    background:
+      radial-gradient(1100px 760px at 82% -12%, rgba(27, 73, 101, 0.30), transparent 58%),
+      radial-gradient(900px 680px at -8% 112%, rgba(200, 160, 74, 0.10), transparent 55%),
+      radial-gradient(700px 500px at 50% 50%, rgba(28, 37, 62, 0.25), transparent 70%),
+      #080B14;
+  }
+
+  ::selection { background: rgba(200,160,74,0.32); color: #FFF6E2; }
+  :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 4px; }
+
+  .header {
+    background: linear-gradient(180deg, rgba(8,11,20,0.94) 0%, rgba(8,11,20,0.62) 100%);
+    backdrop-filter: blur(26px) saturate(1.25);
+    -webkit-backdrop-filter: blur(26px) saturate(1.25);
+    border-bottom: 1px solid var(--hair);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 12px 30px -22px rgba(0,0,0,0.9);
+  }
+  .brand-title { letter-spacing: 0.2px; }
+  .countdown-num { text-shadow: 0 0 22px rgba(200,160,74,0.35); }
+  .header-action-btn {
+    background: linear-gradient(160deg, rgba(200,160,74,0.18), rgba(200,160,74,0.06));
+    backdrop-filter: blur(10px);
+    transition: transform .25s var(--ease), background .25s var(--ease), box-shadow .25s var(--ease);
+  }
+  .header-action-btn:hover { transform: translateY(-2px); box-shadow: var(--glow-gold); }
+
+  .sidebar {
+    background: linear-gradient(180deg, rgba(14,20,36,0.96), rgba(10,14,24,0.98));
+    border-right: 1px solid var(--hair);
+  }
+
+  .day-tabs {
+    background: linear-gradient(180deg, rgba(12,17,30,0.7), rgba(12,17,30,0.18));
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--hair);
+  }
+  .day-tab {
+    border-radius: 12px 12px 0 0;
+    border-bottom: 2px solid transparent;
+    transition: color .28s var(--ease), background .28s var(--ease), transform .28s var(--ease);
+    position: relative;
+  }
+  .day-tab:hover { background: rgba(200,160,74,0.06); }
+  .day-tab.active { color: var(--gold-bright); border-bottom-color: transparent; }
+  .day-tab.active::after {
+    content: '';
+    position: absolute; left: 14px; right: 14px; bottom: -1px; height: 2.5px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), var(--gold-bright), var(--gold), transparent);
+    box-shadow: 0 0 12px rgba(200,160,74,0.7);
+    animation: luxBar .45s var(--ease) both;
+  }
+  @keyframes luxBar { from { opacity: 0; transform: scaleX(0.4); } to { opacity: 1; transform: scaleX(1); } }
+  .day-tab-num { transition: transform .28s var(--ease); }
+  .day-tab.active .day-tab-num { transform: translateY(-1px); }
+
+  #day-header { position: relative; }
+  #day-header > * { animation: luxIn .55s var(--ease) both; }
+  #day-header > *:nth-child(2){animation-delay:.04s}
+  #day-header > *:nth-child(3){animation-delay:.07s}
+  #day-header > *:nth-child(4){animation-delay:.10s}
+  #day-header > *:nth-child(5){animation-delay:.13s}
+  #day-header > *:nth-child(6){animation-delay:.16s}
+  .day-header-title { letter-spacing: -0.4px; }
+
+  .day-budget, .day-weather, .journal-progress, .day-weather-pending {
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  }
+  .day-budget {
+    background: linear-gradient(135deg, rgba(200,160,74,0.16), rgba(200,160,74,0.06));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+  }
+
+  .spot {
+    background: linear-gradient(158deg, rgba(28,37,62,0.92), rgba(16,23,40,0.94));
+    border: 1px solid rgba(200,160,74,0.09);
+    border-radius: 16px;
+    box-shadow: var(--sh-card), inset 0 1px 0 rgba(255,255,255,0.035);
+    transition: transform .38s var(--ease), box-shadow .38s var(--ease), border-color .38s var(--ease);
+  }
+  .spot:hover {
+    transform: translateY(-3px);
+    border-color: rgba(200,160,74,0.30);
+    box-shadow: 0 18px 36px -18px rgba(0,0,0,0.8), 0 0 0 1px rgba(200,160,74,0.14);
+  }
+  .spot.active {
+    border-color: var(--gold);
+    background: linear-gradient(158deg, rgba(200,160,74,0.16), rgba(20,28,48,0.94));
+    box-shadow: 0 18px 40px -18px rgba(0,0,0,0.8), 0 0 0 1px var(--hair-str), var(--glow-gold);
+  }
+  .spot-icon {
+    border-radius: 13px;
+    box-shadow: 0 6px 16px -6px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.30), inset 0 0 0 1px rgba(255,255,255,0.10);
+  }
+  .spot-name { letter-spacing: -0.2px; }
+
+  @keyframes luxIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  .spots-list > .spot { animation: luxIn .5s var(--ease) both; }
+  .spots-list > .spot:nth-child(1){animation-delay:.03s}
+  .spots-list > .spot:nth-child(2){animation-delay:.06s}
+  .spots-list > .spot:nth-child(3){animation-delay:.09s}
+  .spots-list > .spot:nth-child(4){animation-delay:.12s}
+  .spots-list > .spot:nth-child(5){animation-delay:.15s}
+  .spots-list > .spot:nth-child(6){animation-delay:.18s}
+  .spots-list > .spot:nth-child(7){animation-delay:.21s}
+  .spots-list > .spot:nth-child(8){animation-delay:.24s}
+  .spots-list > .spot:nth-child(n+9){animation-delay:.27s}
+
+  .ov-group { animation: luxIn .5s var(--ease) both; }
+  .ov-group:nth-child(2){animation-delay:.05s}
+  .ov-group:nth-child(3){animation-delay:.1s}
+  .ov-group:nth-child(4){animation-delay:.15s}
+  .ov-group:nth-child(5){animation-delay:.2s}
+  .ov-group:nth-child(6){animation-delay:.25s}
+  .ov-item { border-radius: 14px; transition: transform .3s var(--ease), background .3s var(--ease), box-shadow .3s var(--ease); }
+  .ov-item:hover { transform: translateX(3px); box-shadow: 0 10px 24px -16px rgba(0,0,0,0.8); }
+
+  .ov-chip { backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); transition: all .25s var(--ease); }
+  .ov-chip:hover { transform: translateY(-1px); }
+  .ov-chip.active { box-shadow: var(--glow-gold); }
+
+  .spot-options {
+    background: linear-gradient(180deg, rgba(0,0,0,0.16), rgba(0,0,0,0.05));
+    border-radius: 12px; padding: 10px 11px; border: 1px solid rgba(255,255,255,0.05);
+  }
+  .opt { transition: background .2s var(--ease); border-radius: 9px; }
+  .opt.rec { background: linear-gradient(135deg, rgba(200,160,74,0.14), rgba(200,160,74,0.04)); }
+  .opt-link { transition: all .2s var(--ease); }
+
+  .gps-day-btn, .popup-link { position: relative; overflow: hidden; transition: transform .3s var(--ease), box-shadow .3s var(--ease); }
+  .gps-day-btn {
+    background: linear-gradient(135deg, #34B0CE 0%, #1B4965 100%);
+    box-shadow: 0 12px 28px -14px rgba(52,176,206,0.6), inset 0 1px 0 rgba(255,255,255,0.25);
+  }
+  .gps-day-btn:hover { transform: translateY(-3px); box-shadow: 0 18px 36px -16px rgba(52,176,206,0.7); }
+  .gps-day-btn::before, .popup-link::before {
+    content: ''; position: absolute; top: 0; left: -120%; width: 70%; height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,0.35), transparent);
+    transform: skewX(-18deg); transition: left .6s var(--ease); pointer-events: none;
+  }
+  .gps-day-btn:hover::before, .popup-link:hover::before { left: 140%; }
+  .popup-link { background: linear-gradient(135deg, var(--gold-bright), var(--gold)); box-shadow: 0 8px 20px -10px rgba(200,160,74,0.6); }
+
+  .map-btn, .map-legend, .leaflet-control-zoom a {
+    background: rgba(14, 20, 36, 0.62) !important;
+    backdrop-filter: blur(18px) saturate(1.2); -webkit-backdrop-filter: blur(18px) saturate(1.2);
+    border: 1px solid var(--hair) !important;
+  }
+  .map-btn { transition: all .25s var(--ease); }
+  .map-btn:hover { transform: translateY(-1px); box-shadow: var(--glow-gold); }
+  .map-btn.active { background: linear-gradient(135deg, var(--gold-bright), var(--gold)) !important; color: #0B0F1A !important; box-shadow: var(--glow-gold); }
+  .leaflet-popup-content-wrapper { box-shadow: var(--sh-pop) !important; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); background: rgba(18,25,41,0.86) !important; }
+  .map-legend { box-shadow: var(--sh-pop); }
+
+  .mobile-toggle {
+    background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+    box-shadow: 0 14px 30px -10px rgba(200,160,74,0.55), inset 0 1px 0 rgba(255,255,255,0.3);
+    transition: transform .3s var(--ease), box-shadow .3s var(--ease);
+  }
+  .mobile-toggle:hover { transform: translateX(-50%) translateY(-3px); }
+  .modal { box-shadow: var(--sh-pop); }
+  .modal-backdrop { background: rgba(5,8,14,0.72); }
+
+  .spots-list::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--gold), #8B6914); border-radius: 4px; }
+  .spots-list::-webkit-scrollbar { width: 7px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: .001ms !important; animation-delay: 0ms !important;
+      animation-iteration-count: 1 !important; transition-duration: .001ms !important;
+    }
+  }
+
   /* INTRO ANIMATION */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(10px); }
