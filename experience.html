@@ -104,6 +104,32 @@
   .panel.active .strip .hl:nth-child(4){transition-delay:.24s}
   .panel.active .strip .hl:nth-child(5){transition-delay:.32s}
 
+  /* cartes cliquables */
+  .hl{cursor:pointer;outline:none}
+  .hl:active{transform:scale(.97)}
+  .hl:focus-visible{box-shadow:0 0 0 2px var(--coral),0 18px 40px -20px rgba(0,0,0,.7)}
+  .hl-go{display:inline-block;margin-top:10px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--amber)}
+
+  /* ===== FICHE DÉTAIL (sheet) ===== */
+  .detail{position:fixed;inset:0;z-index:80;display:flex;align-items:flex-end;justify-content:center;background:rgba(8,6,16,.62);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .35s var(--ease)}
+  .detail.open{opacity:1;pointer-events:auto}
+  .detail-card{position:relative;width:100%;max-width:560px;background:#16101f;border-radius:28px 28px 0 0;overflow:hidden;box-shadow:0 -24px 70px rgba(0,0,0,.65);transform:translateY(100%);transition:transform .45s var(--ease)}
+  .detail.open .detail-card{transform:none}
+  .detail-img{height:240px;background-size:cover;background-position:center;background-color:#241634;position:relative}
+  .detail-cat{position:absolute;left:16px;bottom:16px;width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;background:rgba(10,8,20,.5);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2)}
+  .detail-close{position:absolute;top:14px;right:14px;width:40px;height:40px;border-radius:50%;border:none;background:rgba(0,0,0,.5);color:#fff;font-size:16px;cursor:pointer;backdrop-filter:blur(6px);z-index:2}
+  .detail-body{padding:24px 26px 30px}
+  .detail-over{font-family:'Courier New',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--amber);margin-bottom:9px}
+  .detail-name{font-family:var(--serif);font-weight:800;font-size:30px;line-height:1.06}
+  .detail-note{margin-top:13px;color:rgba(255,255,255,.76);font-size:15px;line-height:1.6}
+  .detail-maps{margin-top:24px;display:inline-flex;align-items:center;gap:8px;padding:15px 28px;border-radius:42px;background:var(--sun);color:#fff;text-decoration:none;font-weight:700;font-size:13px;letter-spacing:.4px;text-transform:uppercase;box-shadow:0 16px 38px -12px rgba(255,107,92,.6);transition:transform .3s var(--ease)}
+  .detail-maps:hover{transform:translateY(-2px)}
+  @media(min-width:600px){
+    .detail{align-items:center;padding:24px}
+    .detail-card{border-radius:28px;transform:translateY(26px) scale(.96)}
+    .detail.open .detail-card{transform:none}
+  }
+
   @media(prefers-reduced-motion:reduce){
     *{animation:none!important}
     .reveal,.strip .hl{opacity:1!important;transform:none!important;transition:none!important}
@@ -139,6 +165,19 @@
     </div>
   </section>
 
+</div>
+
+<div id="detail" class="detail" onclick="closeDetail()">
+  <div class="detail-card" onclick="event.stopPropagation()" role="dialog" aria-modal="true">
+    <div class="detail-img" id="d-img"><span class="detail-cat" id="d-cat"></span></div>
+    <button class="detail-close" onclick="closeDetail()" aria-label="Fermer">✕</button>
+    <div class="detail-body">
+      <div class="detail-over" id="d-over"></div>
+      <h3 class="detail-name" id="d-name"></h3>
+      <p class="detail-note" id="d-note"></p>
+      <a class="detail-maps" id="d-maps" target="_blank" rel="noopener">Ouvrir dans Google Maps →</a>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -190,6 +229,7 @@
       ]}
   ];
 
+  const ALLHL = [];
   const scroller = document.getElementById('scroller');
   const outro = scroller.querySelector('.outro');
   DAYS.forEach(d => {
@@ -203,16 +243,17 @@
         <h2 class="day-title reveal">${d.title}</h2>
         <p class="day-sub reveal">${d.sub}</p>
         <div class="strip">
-          ${d.hl.map(h => `
-            <article class="hl">
+          ${d.hl.map(h => { const _id = ALLHL.push({ t:h.t, name:h.name, note:h.note, cat:h.cat, img:h.img, over:d.over }) - 1; return `
+            <article class="hl" onclick="openDetail(${_id})" tabindex="0" role="button" aria-label="${h.name}">
               ${h.img ? `<div class="hl-img" style="--i:url('${wiki(h.img,600)}')"><span class="hl-cat">${h.cat}</span></div>`
                       : `<div class="hl-noimg">${h.cat}</div>`}
               <div class="hl-body">
                 <div class="hl-time">${h.t}</div>
                 <h3 class="hl-name">${h.name}</h3>
                 <p class="hl-note">${h.note}</p>
+                <span class="hl-go">Détails &amp; carte →</span>
               </div>
-            </article>`).join('')}
+            </article>`; }).join('')}
         </div>
       </div>`;
     scroller.insertBefore(sec, outro);
@@ -250,6 +291,34 @@
     const max = scroller.scrollHeight - scroller.clientHeight;
     bar.style.width = (max > 0 ? (scroller.scrollTop / max) * 100 : 0) + '%';
   }, { passive: true });
+
+  // ===== Fiche détail (cartes cliquables) =====
+  const detail = document.getElementById('detail');
+  window.openDetail = function(id){
+    const h = ALLHL[id]; if (!h) return;
+    document.getElementById('d-img').style.backgroundImage = h.img
+      ? "url('" + wiki(h.img, 900) + "')"
+      : "linear-gradient(150deg,rgba(255,107,92,.5),rgba(31,182,182,.4))";
+    document.getElementById('d-cat').textContent = h.cat;
+    document.getElementById('d-over').textContent = (h.over ? h.over.replace(/^Jour \d+ · /, '') + ' · ' : '') + h.t;
+    document.getElementById('d-name').textContent = h.name;
+    document.getElementById('d-note').textContent = h.note;
+    const maps = document.getElementById('d-maps');
+    if (/Route|Réveil|Décollage/i.test(h.name)) {
+      maps.style.display = 'none';
+    } else {
+      maps.style.display = 'inline-flex';
+      maps.href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(h.name + ' Algarve Portugal');
+    }
+    detail.classList.add('open');
+  };
+  window.closeDetail = function(){ detail.classList.remove('open'); };
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeDetail();
+    if ((e.key === 'Enter' || e.key === ' ') && document.activeElement && document.activeElement.classList.contains('hl')) {
+      e.preventDefault(); document.activeElement.click();
+    }
+  });
 </script>
 </body>
 </html>
