@@ -1894,9 +1894,94 @@
   .qr-help strong { color: var(--gold); }
 
   .spots-list::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--amber), var(--gold)); }
+
+  /* hero vivant : le dégradé/tint dérive doucement */
+  .day-hero, .day-hero.has-cover::after { background-size: 180% 180%; animation: heroPan 16s ease-in-out infinite alternate; }
+  @keyframes heroPan { from { background-position: 0% 0%; } to { background-position: 100% 100%; } }
+
+  /* ============================================================
+     ÉCRAN D'ENTRÉE CINÉMATIQUE (overlay additif, dismiss = enterApp)
+     ============================================================ */
+  #intro {
+    position: fixed; inset: 0; z-index: 99999;
+    display: flex; align-items: center; justify-content: center; text-align: center; padding: 28px;
+    background: radial-gradient(125% 125% at 50% 8%, #3a2150 0%, #241634 46%, #150c22 100%);
+    overflow: hidden; cursor: pointer;
+    transition: opacity .8s cubic-bezier(0.22,1,0.36,1), transform .8s cubic-bezier(0.22,1,0.36,1), filter .8s cubic-bezier(0.22,1,0.36,1);
+  }
+  #intro.gone { opacity: 0; transform: scale(1.08); filter: blur(10px); pointer-events: none; }
+  .intro-orb { position: absolute; border-radius: 50%; filter: blur(72px); opacity: .55; pointer-events: none; }
+  .intro-orb.o1 { width: 46vmax; height: 46vmax; background: #FF6B5C; top: -12%; left: -8%; animation: orb1 16s ease-in-out infinite alternate; }
+  .intro-orb.o2 { width: 40vmax; height: 40vmax; background: #FF9A3D; bottom: -14%; right: -10%; animation: orb2 19s ease-in-out infinite alternate; }
+  .intro-orb.o3 { width: 34vmax; height: 34vmax; background: #1FB6B6; bottom: -8%; left: 22%; opacity: .4; animation: orb3 22s ease-in-out infinite alternate; }
+  @keyframes orb1 { to { transform: translate(18%, 14%) scale(1.15); } }
+  @keyframes orb2 { to { transform: translate(-16%, -12%) scale(1.2); } }
+  @keyframes orb3 { to { transform: translate(10%, -16%) scale(1.1); } }
+  .intro-inner { position: relative; z-index: 2; max-width: 700px; }
+  .intro-eyebrow { font-family: 'Courier New', monospace; font-size: 12px; letter-spacing: 5px; text-transform: uppercase; color: rgba(255,255,255,0.72); margin-bottom: 16px; }
+  .intro-title {
+    font-family: var(--serif); font-weight: 900; font-size: clamp(66px, 17vw, 150px); line-height: 0.9; letter-spacing: -2px; margin: 0;
+    background: linear-gradient(100deg, #FFE0AE, #FF8A5C 42%, #FF6F94 72%, #FFC178);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    background-size: 220% auto; animation: introShine 6s linear infinite;
+  }
+  @keyframes introShine { to { background-position: 220% center; } }
+  .intro-sub { color: rgba(255,255,255,0.86); font-size: 16px; margin-top: 18px; letter-spacing: .3px; line-height: 1.5; }
+  .intro-count { margin-top: 26px; }
+  .intro-count-num { font-family: var(--serif); font-weight: 900; font-size: 44px; color: #fff; line-height: 1; }
+  .intro-count-lbl { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.6); margin-top: 7px; }
+  .intro-btn {
+    margin-top: 34px; display: inline-flex; align-items: center; gap: 10px;
+    padding: 16px 32px; border-radius: 40px; border: none; cursor: pointer;
+    font-family: var(--sans); font-size: 14px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; color: #fff;
+    background: linear-gradient(135deg, #FF6B5C, #FF9A3D);
+    box-shadow: 0 16px 42px -12px rgba(255,107,92,0.7), inset 0 1px 0 rgba(255,255,255,0.3);
+    transition: transform .3s cubic-bezier(0.22,1,0.36,1), box-shadow .3s cubic-bezier(0.22,1,0.36,1);
+  }
+  .intro-btn:hover { transform: translateY(-3px); box-shadow: 0 24px 54px -12px rgba(255,107,92,0.85); }
+  .intro-hint { margin-top: 16px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.45); }
+  .intro-inner > * { animation: introUp .9s cubic-bezier(0.22,1,0.36,1) both; }
+  .intro-inner > *:nth-child(2){animation-delay:.12s}
+  .intro-inner > *:nth-child(3){animation-delay:.22s}
+  .intro-inner > *:nth-child(4){animation-delay:.32s}
+  .intro-inner > *:nth-child(5){animation-delay:.42s}
+  .intro-inner > *:nth-child(6){animation-delay:.52s}
+  @keyframes introUp { from { opacity: 0; transform: translateY(22px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .intro-orb, .intro-title, .intro-inner > * { animation: none !important; }
+  }
 </style>
 </head>
 <body>
+<div id="intro" onclick="enterApp()" role="dialog" aria-label="Bienvenue dans ton voyage en Algarve">
+  <div class="intro-orb o1"></div><div class="intro-orb o2"></div><div class="intro-orb o3"></div>
+  <div class="intro-inner">
+    <div class="intro-eyebrow">Ton voyage commence</div>
+    <h1 class="intro-title">Algarve</h1>
+    <div class="intro-sub">23 → 27 juin 2026 · Carvoeiro &amp; la côte d'Algarve · 5 jours</div>
+    <div class="intro-count"><div class="intro-count-num" id="intro-count-num">—</div><div class="intro-count-lbl" id="intro-count-lbl">avant le départ</div></div>
+    <button class="intro-btn" type="button" onclick="enterApp()">Entrer dans le voyage →</button>
+    <div class="intro-hint">ou touche l'écran</div>
+  </div>
+</div>
+<script>
+  window.enterApp = function(){ var i = document.getElementById('intro'); if (i && !i.classList.contains('gone')) { i.classList.add('gone'); setTimeout(function(){ i.style.display = 'none'; }, 850); } };
+  (function(){
+    try {
+      var t = new Date('2026-06-23T21:30:00'), now = new Date();
+      var d = Math.ceil((t - now) / 86400000);
+      var num = document.getElementById('intro-count-num'), lbl = document.getElementById('intro-count-lbl');
+      if (num && lbl) {
+        if (d > 1) { num.textContent = 'J-' + d; lbl.textContent = 'avant le départ'; }
+        else if (d === 1) { num.textContent = 'Demain'; lbl.textContent = 'on décolle'; }
+        else if (d <= 0 && d >= -4) { num.textContent = 'Jour ' + (Math.abs(d) + 1); lbl.textContent = 'en Algarve'; }
+        else { num.textContent = '✓'; lbl.textContent = 'voyage terminé'; }
+      }
+      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      setTimeout(window.enterApp, reduce ? 500 : 3000);
+    } catch (e) { try { window.enterApp(); } catch (_) {} }
+  })();
+</script>
 
 <header class="header">
   <div class="brand">
