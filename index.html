@@ -1334,6 +1334,49 @@
     border-radius: 12px;
   }
   .ov-intro strong { color: var(--gold-bright); }
+  .ov-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 14px;
+  }
+  .ov-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    border-radius: 30px;
+    border: 1px solid var(--border);
+    background: var(--bg-3);
+    color: var(--text-dim);
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+    line-height: 1;
+  }
+  .ov-chip:hover { border-color: var(--border-strong); color: var(--cream); }
+  .ov-chip.active {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--bg);
+    box-shadow: 0 4px 14px rgba(200,160,74,0.25);
+  }
+  .ov-chip.active[style*="--chip"] {
+    background: var(--chip);
+    border-color: var(--chip);
+  }
+  .ov-chip-n {
+    font-size: 10.5px;
+    font-weight: 700;
+    opacity: 0.7;
+    background: rgba(0,0,0,0.18);
+    padding: 1px 6px;
+    border-radius: 10px;
+  }
+  .ov-chip.active .ov-chip-n { background: rgba(0,0,0,0.22); opacity: 0.85; }
   .ov-group { margin-bottom: 22px; }
   .ov-group-title {
     font-family: var(--serif);
@@ -2438,6 +2481,7 @@ ${name}`);
       const allCoords = [];
       days.forEach((d, di) => {
         d.spots.forEach((s, i) => {
+          if (overviewMode && !spotMatchesFilter(s)) return;
           const marker = L.marker(s.coords, { icon: createMarker(s, i, false) }).addTo(map);
           marker.bindPopup(buildPopup(s, d.number), { maxWidth: 300 });
           markers.push(marker);
@@ -2505,14 +2549,28 @@ ${name}`);
   }
 
   // ======== VUE D'ENSEMBLE ========
+  let overviewFilter = 'all';
   const OV_GROUPS = [
-    { title: 'Restaurants', icon: '🍽️', color: '#E07856', cats: ['resto'] },
-    { title: 'Bars & vues', icon: '🍸', color: '#2EC4B6', cats: ['bar'] },
-    { title: 'Couchers de soleil', icon: '🌅', color: '#FF7E5F', sunset: true },
-    { title: 'Glaciers', icon: '🍨', color: '#8FD9A8', cats: ['glace'] },
-    { title: 'Plages & criques', icon: '🏖️', color: '#4DC3E0', cats: ['plage'] },
-    { title: 'À voir & activités', icon: '🏛️', color: '#A978E0', cats: ['culture', 'insta', 'nature', 'vin'] },
+    { key: 'resto',  title: 'Restaurants',        chip: 'Restos',   icon: '🍽️', color: '#E07856', cats: ['resto'] },
+    { key: 'bar',    title: 'Bars & vues',         chip: 'Bars',     icon: '🍸', color: '#2EC4B6', cats: ['bar'] },
+    { key: 'sunset', title: 'Couchers de soleil',  chip: 'Sunsets',  icon: '🌅', color: '#FF7E5F', sunset: true },
+    { key: 'glace',  title: 'Glaciers',            chip: 'Glaciers', icon: '🍨', color: '#8FD9A8', cats: ['glace'] },
+    { key: 'plage',  title: 'Plages & criques',    chip: 'Plages',   icon: '🏖️', color: '#4DC3E0', cats: ['plage'] },
+    { key: 'voir',   title: 'À voir & activités',  chip: 'À voir',   icon: '🏛️', color: '#A978E0', cats: ['culture', 'insta', 'nature', 'vin'] },
   ];
+  function ovGroupByKey(k) { return OV_GROUPS.find(g => g.key === k); }
+  function spotMatchesFilter(s) {
+    if (overviewFilter === 'all') return true;
+    const g = ovGroupByKey(overviewFilter);
+    if (!g) return true;
+    return g.sunset ? !!s.sunset : g.cats.includes(s.category);
+  }
+  window.setOverviewFilter = function(k) {
+    overviewFilter = k;
+    renderOverviewHeader();
+    renderOverview();
+    renderMapMarkers();
+  };
 
   function allSpotsFlat() {
     const out = [];
@@ -2531,9 +2589,14 @@ ${name}`);
 
   function renderOverview() {
     const flat = allSpotsFlat();
+    const activeG = ovGroupByKey(overviewFilter);
+    const introTxt = overviewFilter === 'all'
+      ? `Choisis une catégorie en haut pour filtrer (la carte se filtre aussi). Tape un lieu pour sauter au bon jour. <strong>${flat.length} étapes</strong> sur 5 jours.`
+      : `${activeG.icon} <strong>${activeG.title}</strong> du séjour. Tape un lieu pour le voir sur la carte au bon jour, ou « Tout » pour revenir à la vue complète.`;
     let html = `<div class="overview-wrap">
-      <div class="ov-intro">Tous les spots du séjour, regroupés par catégorie. Tape une carte pour sauter au bon jour et la voir sur la carte. <strong>${flat.length} étapes</strong> sur 5 jours.</div>`;
+      <div class="ov-intro">${introTxt}</div>`;
     OV_GROUPS.forEach(g => {
+      if (overviewFilter !== 'all' && g.key !== overviewFilter) return;
       const items = flat.filter(({ s }) => g.sunset ? s.sunset : g.cats.includes(s.category));
       let list = items;
       if (g.dedupe) {
@@ -2573,18 +2636,19 @@ ${name}`);
       <div class="day-header-overline">Vue d'ensemble · 5 jours</div>
       <div class="day-header-title">Tout le séjour, d'un coup d'œil</div>
       <div class="day-header-date">23 au 27 juin 2026 · ${flat.length} étapes</div>
-      <div class="day-stats">
-        <div class="day-stat"><strong>${count(['resto'])}</strong> restos</div>
-        <div class="day-stat"><strong>${count(['plage'])}</strong> plages</div>
-        <div class="day-stat"><strong>${count(['bar'])}</strong> bars</div>
-        <div class="day-stat"><strong>${count(['glace'])}</strong> glaciers</div>
-        <div class="day-stat"><strong>${flat.filter(({ s }) => s.sunset).length}</strong> sunsets</div>
+      <div class="ov-filters">
+        <button class="ov-chip${overviewFilter === 'all' ? ' active' : ''}" onclick="setOverviewFilter('all')">Tout<span class="ov-chip-n">${flat.length}</span></button>
+        ${OV_GROUPS.map(g => {
+          const n = flat.filter(({ s }) => g.sunset ? s.sunset : g.cats.includes(s.category)).length;
+          return n ? `<button class="ov-chip${overviewFilter === g.key ? ' active' : ''}" style="--chip:${g.color}" onclick="setOverviewFilter('${g.key}')">${g.icon} ${g.chip}<span class="ov-chip-n">${n}</span></button>` : '';
+        }).join('')}
       </div>
       ${wb.typical > 0 ? `<div class="day-budget">💰 Budget séjour ~${formatEuro(wb.typical)} / pers (hors hôtel, vol, voiture)</div>` : ''}`;
   }
 
   window.selectOverview = function() {
     overviewMode = true;
+    overviewFilter = 'all';
     viewAll = true;
     document.getElementById('btn-view-all').classList.add('active');
     renderTabs();
