@@ -1,4 +1,4 @@
-const CACHE_NAME = 'algarve-2026-v10';
+const CACHE_NAME = 'algarve-2026-v11';
 const STATIC_ASSETS = [
   './',
   './index.html',
